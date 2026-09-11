@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AgroGon — Your Intelligent Crop Guardian</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --primary:#1B7F4C;
+  --secondary:#2E9D68;
+  --accent:#F4B942;
+  --bg:#F7FAF7;
+  --dark:#12352A;
+  --danger:#D9534F;
+  --warning:#E8A317;
+  --success:#2E9D68;
+  --ink:#16241D;
+  --mist:#E4ECE6;
+  --mist-2:#EFF5F0;
+  --white:#FFFFFF;
+  --shadow: 0 8px 24px rgba(18,53,42,0.08);
+  --shadow-sm: 0 2px 8px rgba(18,53,42,0.06);
+  --radius: 20px;
+  --radius-sm: 12px;
+  --font-head:'Manrope',sans-serif;
+  --font-body:'Inter',sans-serif;
+  --font-mono:'IBM Plex Mono',monospace;
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+html,body{margin:0;padding:0;}
+body{
+  font-family:var(--font-body);
+  color:var(--ink);
+  background:
+    radial-gradient(circle at 15% 10%, rgba(46,157,104,0.10), transparent 40%),
+    radial-gradient(circle at 85% 90%, rgba(27,127,76,0.10), transparent 45%),
+    var(--dark);
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:28px 12px;
+  position:relative;
+  overflow-x:hidden;
+}
+/* ambient contour-line texture, like a topographic field survey */
+body::before{
+  content:"";
+  position:fixed; inset:0;
+  background-image: repeating-radial-gradient(circle at 20% 30%, transparent 0, transparent 38px, rgba(244,249,246,0.035) 39px, transparent 40px),
+                     repeating-radial-gradient(circle at 80% 75%, transparent 0, transparent 54px, rgba(244,249,246,0.03) 55px, transparent 56px);
+  pointer-events:none;
+  z-index:0;
+}
+.stage{
+  position:relative; z-index:1;
+  display:flex; flex-direction:column; align-items:center; gap:14px;
+}
+.brandmark{
+  display:flex; align-items:center; gap:10px; color:#EAF3EC; opacity:0.85;
+  font-family:var(--font-head); font-weight:800; letter-spacing:0.4px; font-size:14px;
+}
+.brandmark svg{width:22px;height:22px;}
+
+/* ===== Phone frame ===== */
+.phone{
+  width:392px; height:824px;
+  background:var(--dark);
+  border-radius:46px;
+  padding:14px;
+  box-shadow: 0 40px 80px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.04) inset;
+  position:relative;
+}
+.phone::after{ /* notch */
+  content:"";
+  position:absolute; top:14px; left:50%; transform:translateX(-50%);
+  width:120px; height:26px; background:var(--dark); border-radius:0 0 18px 18px; z-index:5;
+}
+.screen{
+  width:100%; height:100%;
+  background:var(--bg);
+  border-radius:32px;
+  overflow:hidden;
+  position:relative;
+  display:flex; flex-direction:column;
+}
+.statusbar{
+  height:34px; flex:0 0 auto; display:flex; align-items:center; justify-content:space-between;
+  padding:0 26px; font-family:var(--font-mono); font-size:12px; font-weight:600; color:var(--dark); background:transparent; z-index:4;
+}
+.view-port{
+  flex:1 1 auto; overflow-y:auto; overflow-x:hidden; position:relative; scrollbar-width:none;
+}
+.view-port::-webkit-scrollbar{display:none;}
+.view{
+  position:absolute; inset:0; padding-bottom:20px;
+  animation: viewIn 340ms cubic-bezier(.22,.9,.32,1);
+}
+@keyframes viewIn{ from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
+
+/* ===== Bottom Nav ===== */
+.bottomnav{
+  flex:0 0 auto; display:flex; align-items:center; justify-content:space-around;
+  padding:10px 6px 16px; background:var(--white); border-top:1px solid var(--mist); position:relative; z-index:6;
+}
+.navbtn{ display:flex; flex-direction:column; align-items:center; gap:3px; background:none; border:none; color:#8AA093; font-family:var(--font-body); font-size:10.5px; font-weight:600; cursor:pointer; padding:4px 8px;}
+.navbtn.active{color:var(--primary);}
+.navbtn svg{width:22px;height:22px;}
+.navbtn.scanbtn{
+  margin-top:-30px; background:linear-gradient(155deg,var(--secondary),var(--primary)); color:#fff;
+  width:56px; height:56px; border-radius:50%; justify-content:center; box-shadow:0 10px 22px rgba(27,127,76,0.4);
+}
+.navbtn.scanbtn svg{width:24px;height:24px;}
+.navbtn.scanbtn span{display:none;}
+
+/* ===== Typography ===== */
+h1,h2,h3{font-family:var(--font-head); color:var(--dark); margin:0;}
+.h1{font-size:26px; font-weight:800; letter-spacing:-0.3px;}
+.h2{font-size:19px; font-weight:800;}
+.h3{font-size:15px; font-weight:700;}
+.eyebrow{font-family:var(--font-mono); font-size:10.5px; letter-spacing:1.4px; text-transform:uppercase; color:var(--secondary); font-weight:600;}
+.muted{color:#5E7568; font-size:13px; line-height:1.5;}
+.mono{font-family:var(--font-mono);}
+
+/* ===== Common layout ===== */
+.px{padding-left:20px; padding-right:20px;}
+.section{padding:18px 20px 4px;}
+.row{display:flex; align-items:center; justify-content:space-between;}
+.stack{display:flex; flex-direction:column; gap:12px;}
+.hgap8{display:flex; gap:8px;}
+.hgap10{display:flex; gap:10px;}
+
+/* ===== Cards ===== */
+.card{
+  background:var(--white); border-radius:var(--radius); padding:16px; box-shadow:var(--shadow-sm); border:1px solid var(--mist);
+}
+.card.tight{padding:12px 14px;}
+.pill{
+  display:inline-flex; align-items:center; gap:5px; font-size:11px; font-weight:700; padding:5px 10px; border-radius:100px;
+  font-family:var(--font-body);
+}
+.pill.low{background:#E7F5EC; color:var(--primary);}
+.pill.medium{background:#FDF3DB; color:#9A6B0A;}
+.pill.high{background:#FBE8E7; color:var(--danger);}
+.pill.neutral{background:var(--mist-2); color:#5E7568;}
+
+/* ===== Buttons ===== */
+.btn{
+  font-family:var(--font-head); font-weight:700; font-size:14.5px; border:none; border-radius:14px; padding:15px 18px;
+  display:flex; align-items:center; justify-content:center; gap:8px; cursor:pointer; width:100%; transition:transform .15s ease;
+}
+.btn:active{transform:scale(0.98);}
+.btn-primary{background:linear-gradient(155deg,var(--secondary),var(--primary)); color:#fff; box-shadow:0 10px 20px rgba(27,127,76,0.28);}
+.btn-secondary{background:var(--white); color:var(--primary); border:1.5px solid var(--primary);}
+.btn-ghost{background:transparent; color:#5E7568; box-shadow:none;}
+.btn-accent{background:var(--accent); color:var(--dark);}
+.btn-sm{padding:10px 14px; font-size:13px; border-radius:11px; width:auto;}
+
+/* ===== Inputs ===== */
+.field{display:flex; flex-direction:column; gap:6px;}
+.field label{font-size:12.5px; font-weight:600; color:var(--dark);}
+.field input, .field select{
+  border:1.5px solid var(--mist); background:var(--mist-2); border-radius:12px; padding:13px 14px; font-size:14.5px; font-family:var(--font-body); color:var(--ink); outline:none;
+}
+.field input:focus, .field select:focus{border-color:var(--secondary); background:#fff;}
+
+/* ===== Leaf-ring health gauge (signature element) ===== */
+.gauge-wrap{position:relative; display:flex; align-items:center; justify-content:center;}
+.gauge-wrap svg{transform:rotate(-90deg);}
+.gauge-track{stroke:var(--mist); fill:none;}
+.gauge-fill{fill:none; stroke-linecap:round; transition:stroke-dashoffset 1.1s cubic-bezier(.22,.9,.32,1);}
+.gauge-center{position:absolute; text-align:center;}
+.gauge-num{font-family:var(--font-head); font-weight:800; color:var(--dark);}
+.gauge-label{font-size:10.5px; color:#5E7568; font-weight:600;}
+
+/* ===== Splash ===== */
+.splash{height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; background:
+  radial-gradient(ellipse at 50% 0%, #1E9259 0%, var(--dark) 65%); color:#fff; gap:16px; text-align:center;}
+.splash .logo{width:78px;height:78px; animation:leafPulse 2.2s ease-in-out infinite;}
+@keyframes leafPulse{0%,100%{transform:scale(1); filter:drop-shadow(0 0 0 rgba(244,185,66,0));} 50%{transform:scale(1.06); filter:drop-shadow(0 0 18px rgba(244,185,66,0.35));}}
+.splash .word{font-family:var(--font-head); font-weight:800; font-size:30px; letter-spacing:1px;}
+.splash .tag{font-size:13px; color:#BFE0CC; max-width:230px; line-height:1.5;}
+.splash .barwrap{width:120px; height:3px; background:rgba(255,255,255,0.15); border-radius:10px; overflow:hidden; margin-top:10px;}
+.splash .bar{height:100%; width:0%; background:var(--accent); animation:load 2s ease forwards;}
+@keyframes load{to{width:100%;}}
+
+/* ===== Onboarding ===== */
+.onb{height:100%; display:flex; flex-direction:column;}
+.onb-art{flex:1; display:flex; align-items:center; justify-content:center; background:var(--mist-2); position:relative; overflow:hidden;}
+.onb-dots{display:flex; gap:6px; justify-content:center; margin:14px 0;}
+.dot{width:6px;height:6px;border-radius:50%; background:var(--mist);}
+.dot.on{width:20px; background:var(--primary);}
+.onb-body{padding:0 26px 22px; text-align:center;}
+.skip{position:absolute; top:18px; right:20px; z-index:3; color:#5E7568; font-size:13px; font-weight:600; background:none; border:none;}
+
+/* misc */
+.badge-dot{width:8px;height:8px;border-radius:50%; display:inline-block;}
+.divider{height:1px; background:var(--mist); margin:14px 0;}
+.chip{background:var(--mist-2); border:1px solid var(--mist); border-radius:100px; padding:8px 13px; font-size:12.5px; font-weight:600; color:var(--dark); white-space:nowrap;}
+.scroll-x{display:flex; gap:10px; overflow-x:auto; padding-bottom:4px; scrollbar-width:none;}
+.scroll-x::-webkit-scrollbar{display:none;}
+
+/* field map */
+.fieldmap{
+  position:relative; border-radius:16px; overflow:hidden; height:150px;
+  background:
+    linear-gradient(160deg, rgba(27,127,76,0.10), transparent),
+    repeating-linear-gradient(0deg, #DCEBE1 0 2px, transparent 2px 18px),
+    repeating-linear-gradient(90deg, #DCEBE1 0 2px, transparent 2px 18px),
+    #EAF3EC;
+  border:1px solid var(--mist);
+}
+.zone{position:absolute; border-radius:8px; opacity:0.85; display:flex; align-items:center; justify-content:center; font-family:var(--font-mono); font-size:10px; font-weight:700; color:#fff; cursor:pointer; transition:transform .15s;}
+.zone:active{transform:scale(0.95);}
+
+/* Scanner */
+.scanview{height:340px; background:linear-gradient(180deg,#0F2A20,#12352A); position:relative; display:flex; align-items:center; justify-content:center; overflow:hidden;}
+.scanview img{width:100%; height:100%; object-fit:cover; opacity:0.9;}
+.scan-frame{position:absolute; inset:34px; border:2px solid rgba(244,185,66,0.8); border-radius:18px;}
+.scan-corner{position:absolute; width:22px; height:22px; border-color:var(--accent); }
+.scanline{position:absolute; left:34px; right:34px; height:2px; background:linear-gradient(90deg,transparent,var(--accent),transparent); box-shadow:0 0 12px 2px rgba(244,185,66,0.6); animation:scanmove 1.8s ease-in-out infinite;}
+@keyframes scanmove{0%{top:40px;} 50%{top:300px;} 100%{top:40px;}}
+
+/* chat */
+.msg{max-width:78%; padding:11px 14px; border-radius:16px; font-size:13.5px; line-height:1.45;}
+.msg.bot{background:var(--white); border:1px solid var(--mist); border-bottom-left-radius:4px; align-self:flex-start;}
+.msg.user{background:var(--primary); color:#fff; border-bottom-right-radius:4px; align-self:flex-end;}
+
+/* toast */
+.toast{position:absolute; left:16px; right:16px; bottom:88px; background:var(--dark); color:#fff; padding:12px 16px; border-radius:14px; font-size:13px; display:flex; align-items:center; gap:10px; box-shadow:0 12px 24px rgba(0,0,0,0.3); z-index:50; animation:toastIn .3s ease;}
+@keyframes toastIn{from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);}}
+
+/* drone */
+.dronepath{position:absolute; inset:0;}
+.dronedot{position:absolute; width:22px; height:22px; transition:left 1.1s linear, top 1.1s linear;}
+.stepper{display:flex; flex-direction:column; gap:0;}
+.stepitem{display:flex; gap:12px;}
+.stepline{width:22px; display:flex; flex-direction:column; align-items:center;}
+.stepcircle{width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:11px; flex:0 0 auto; font-weight:800;}
+.stepbar{width:2px; flex:1; min-height:22px;}
+
+/* demo mode ribbon */
+.demoribbon{
+  position:absolute; top:14px; right:-34px; background:var(--accent); color:var(--dark); font-family:var(--font-mono); font-weight:700;
+  font-size:10px; padding:4px 40px; transform:rotate(45deg); z-index:40; letter-spacing:1px; box-shadow:0 2px 6px rgba(0,0,0,0.15);
+  pointer-events:none;
+}
+
+/* top app header */
+.topbar{padding:16px 20px 8px; display:flex; align-items:center; gap:12px;}
+.iconbtn{width:38px;height:38px; border-radius:12px; background:var(--white); border:1px solid var(--mist); display:flex; align-items:center; justify-content:center; cursor:pointer;}
+.iconbtn svg{width:18px;height:18px;}
+
+.side-scale{transform-origin:top left;}
+@media (max-width:440px){
+  .phone{width:100vw; height:100vh; border-radius:0; padding:0;}
+  .phone::after{display:none;}
+  .screen{border-radius:0;}
+  .stage{gap:0;}
+  .brandmark{display:none;}
+}
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="brandmark">
+    <svg viewBox="0 0 24 24" fill="none"><path d="M12 2C7 2 3 6 3 11c0 6 9 11 9 11s9-5 9-11c0-5-4-9-9-9z" fill="#F4B942"/><path d="M12 5c-3 0-5.5 2.5-5.5 6 0 4 5.5 7.5 5.5 7.5s5.5-3.5 5.5-7.5C17.5 7.5 15 5 12 5z" fill="#1B7F4C"/></svg>
+    AGROGON PROTOTYPE — SMART INDIA HACKATHON DEMO BUILD
+  </div>
+  <div class="phone">
+    <div class="screen" id="screen">
+      <div class="demoribbon" id="demoribbon" style="display:none;">DEMO MODE</div>
+      <div class="statusbar" id="statusbar"><span id="clock">9:41</span><span>●●●● AgroGon &nbsp; 📶 🔋82%</span></div>
+      <div class="view-port" id="viewport"></div>
+      <div class="bottomnav" id="bottomnav" style="display:none;"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   AGROGON — Interactive Hackathon Prototype
+   Client-only demo (no backend). All data below is clearly
+   marked DEMO data per Section 40/41 of the product spec.
+   ============================================================ */
+
+/* ---------- ICONS (inline SVG, stroke-based, consistent set) ---------- */
+const ICON = {
+  home:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>`,
+  farm:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18"/><path d="M5 20V10l7-6 7 6v10"/><path d="M9 20v-6h6v6"/></svg>`,
+  scan:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7V5a2 2 0 012-2h2"/><path d="M4 17v2a2 2 0 002 2h2"/><path d="M20 7V5a2 2 0 00-2-2h-2"/><path d="M20 17v2a2 2 0 01-2 2h-2"/><circle cx="12" cy="12" r="4"/></svg>`,
+  alerts:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l9 16H3z"/><path d="M12 10v4"/><path d="M12 17h.01"/></svg>`,
+  profile:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 5-6 8-6s6.5 2 8 6"/></svg>`,
+  back:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>`,
+  bell:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 1112 0c0 5 2 6 2 6H4s2-1 2-6"/><path d="M9.5 21a2.5 2.5 0 005 0"/></svg>`,
+  camera:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8a2 2 0 012-2h1l1.5-2h7L17 6h1a2 2 0 012 2v9a2 2 0 01-2 2H6a2 2 0 01-2-2z"/><circle cx="12" cy="13" r="3.5"/></svg>`,
+  gallery:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>`,
+  droplet:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2s7 8 7 13a7 7 0 01-14 0c0-5 7-13 7-13z"/></svg>`,
+  bug:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="7" width="8" height="11" rx="4"/><path d="M12 7V4M9 5l-1.5-1.5M15 5l1.5-1.5M4 12h4M16 12h4M5 18l2.5-1.5M19 18l-2.5-1.5"/></svg>`,
+  virus:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2 2M17.1 17.1l2 2M4.9 19.1l2-2M17.1 6.9l2-2"/></svg>`,
+  cloud:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 18a4 4 0 000-8 5.5 5.5 0 00-10.6 1.7A4 4 0 007 18z"/></svg>`,
+  drone:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2.4"/><path d="M12 9.6V6M12 14.4V18M9.6 12H6M14.4 12H18"/><circle cx="5" cy="5" r="2.2"/><circle cx="19" cy="5" r="2.2"/><circle cx="5" cy="19" r="2.2"/><circle cx="19" cy="19" r="2.2"/></svg>`,
+  chat:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a4 4 0 01-4 4H8l-5 3V6a4 4 0 014-4h10a4 4 0 014 4z"/></svg>`,
+  gauge:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21a9 9 0 100-18 9 9 0 000 18z"/><path d="M12 12l4-3"/></svg>`,
+  map:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 20l-6-2V4l6 2 6-2 6 2v14l-6-2-6 2z"/><path d="M9 4v16M15 6v14"/></svg>`,
+  history:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 109-9"/><path d="M3 4v5h5"/><path d="M12 7v5l4 2"/></svg>`,
+  check:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>`,
+  chev:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>`,
+  settings:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.3 1.9l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.9-.3 1.7 1.7 0 00-1 1.6V21a2 2 0 01-4 0v-.1a1.7 1.7 0 00-1-1.6 1.7 1.7 0 00-1.9.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.9 1.7 1.7 0 00-1.6-1H3a2 2 0 010-4h.1a1.7 1.7 0 001.6-1 1.7 1.7 0 00-.3-1.9l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.9.3H9a1.7 1.7 0 001-1.6V3a2 2 0 014 0v.1a1.7 1.7 0 001 1.6 1.7 1.7 0 001.9-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.9V9a1.7 1.7 0 001.6 1H21a2 2 0 010 4h-.1a1.7 1.7 0 00-1.6 1z"/></svg>`,
+  globe:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 010 18 14 14 0 010-18z"/></svg>`,
+  pin:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.5 7-12a7 7 0 10-14 0c0 5.5 7 12 7 12z"/><circle cx="12" cy="9" r="2.4"/></svg>`,
+  copy:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>`,
+  wifioff:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 1l22 22"/><path d="M16.7 16.7a10 10 0 00-9.4 0M5 12.5a15.9 15.9 0 016-3.4M19 12.5a15.9 15.9 0 00-2.6-2.1M8.5 16a6 6 0 017 0M12 20h.01"/></svg>`,
+  leafshield:`<svg viewBox="0 0 24 24" fill="none"><path d="M12 2 3 6v6c0 5.2 3.8 9.4 9 10 5.2-.6 9-4.8 9-10V6l-9-4z" fill="#1B7F4C"/><path d="M8 12c0-3 2-5.5 5-6-1 3-1 6 0 9-3-.5-5-3-5-3z" fill="#F4B942"/></svg>`,
+};
+function icon(name,cls=""){return ICON[name]?ICON[name].replace("<svg ", `<svg class="${cls}" `):"";}
+
+/* ---------- DEMO DATA (Section 40) ---------- */
+const DEMO = {
+  farmer:{name:"Ravi Kumar", id:"AGG-KA-000124", phone:"+91 98450 12345", village:"Hosahalli", district:"Chikkaballapur", state:"Karnataka", lang:"English"},
+  farm:{name:"Green Valley Farm", area:"2.7 acres", crop:"Tomato", variety:"Arka Rakshak", sowing:"12 Jun 2026", stage:"Flowering", irrigation:"Drip"},
+  weather:{temp:28, cond:"Partly Cloudy", humidity:72, rain:"12%", wind:"9 km/h"},
+  health:{overall:82, disease:"low", pest:"medium", water:"low", nutrient:"medium", soilMoisture:61, soilPh:6.5, temp:29},
+  sensor:{online:true, moisture:61, temp:29, humidity:68, ph:6.5, light:"Normal", lastSync:"2 minutes ago"},
+  disease:{crop:"Tomato", name:"Early Blight", confidence:94, severity:"Moderate", severityPct:58, distanceNote:"Detected on 3 leaves in the lower canopy"},
+  pest:{name:"Aphids", confidence:91, count:7, level:"Low"},
+  alerts:[
+    {icon:"virus", sev:"high", title:"Early Blight reported", meta:"1.8 km away · 4 farms affected", time:"2h ago"},
+    {icon:"bug", sev:"medium", title:"Aphid activity rising", meta:"3.2 km away · 2 farms", time:"6h ago"},
+    {icon:"cloud", sev:"low", title:"Heavy rain expected", meta:"Tomorrow, 6–9 AM", time:"1d ago"},
+  ],
+  history:[
+    {date:"26 Aug", title:"Possible Early Blight detected", sub:"AI Crop Scan · Field 01", icon:"virus", sev:"high"},
+    {date:"25 Aug", title:"Soil moisture below optimal", sub:"Sensor alert · 34%", icon:"droplet", sev:"medium"},
+    {date:"23 Aug", title:"Drone mission completed", sub:"Zone D · Targeted application", icon:"drone", sev:"low"},
+    {date:"20 Aug", title:"Routine crop scan completed", sub:"Health score 88%", icon:"scan", sev:"low"},
+    {date:"14 Aug", title:"Farm boundary registered", sub:"2.7 acres · Field 01", icon:"map", sev:"low"},
+  ],
+  zones:[
+    {id:"A", label:"Zone A", cond:"Healthy", color:"#2E9D68", top:"10%", left:"8%", w:"38%", h:"36%", conf:96, action:"Continue routine monitoring."},
+    {id:"B", label:"Zone B", cond:"Water stress", color:"#E8A317", top:"10%", left:"52%", w:"40%", h:"30%", conf:88, action:"Increase drip irrigation cycle by 15 minutes."},
+    {id:"C", label:"Zone C", cond:"Nutrient concern", color:"#F4B942", top:"52%", left:"8%", w:"38%", h:"38%", conf:79, action:"Apply recommended micronutrient mix per local guidance."},
+    {id:"D", label:"Zone D", cond:"Disease risk", color:"#D9534F", top:"48%", left:"52%", w:"40%", h:"42%", conf:94, action:"Targeted treatment recommended — see Precision Drone."},
+  ],
+};
+
+/* ---------- APP STATE ---------- */
+const state = {
+  view:"splash",
+  onbIdx:0,
+  otp:["","","",""],
+  demoMode:true,
+  scanStage:"capture", // capture -> analyzing -> result
+  missionStage:0, // 0..6 steps
+  chat:[
+    {who:"bot", text:"Namaste Ravi! I'm your AgroGon Assistant. Ask me about your crop, or tap a quick option below."},
+  ],
+};
+
+const NAV = [
+  {id:"dashboard", label:"Home", icon:"home"},
+  {id:"farm", label:"Farm", icon:"farm"},
+  {id:"scanner", label:"", icon:"camera", scan:true},
+  {id:"alerts", label:"Alerts", icon:"alerts"},
+  {id:"profile", label:"Profile", icon:"profile"},
+];
+
+function go(view, extra){
+  state.view = view;
+  if(extra) Object.assign(state, extra);
+  render();
+  const vp = document.getElementById("viewport");
+  if(vp) vp.scrollTop = 0;
+}
+function showToast(msg, ms=2600){
+  const s = document.getElementById("screen");
+  const t = document.createElement("div");
+  t.className="toast";
+  t.innerHTML = `<span style="color:#F4B942">${icon("check")}</span><span>${msg}</span>`;
+  s.appendChild(t);
+  setTimeout(()=>t.remove(), ms);
+}
+
+/* ---------- GAUGE COMPONENT ---------- */
+function gauge(pct, size=120, stroke=12, color, label){
+  const r = (size-stroke)/2;
+  const c = 2*Math.PI*r;
+  const off = c - (pct/100)*c;
+  const col = color || (pct>=70?"#2E9D68":pct>=40?"#E8A317":"#D9534F");
+  return `
+  <div class="gauge-wrap" style="width:${size}px;height:${size}px;">
+    <svg width="${size}" height="${size}">
+      <circle class="gauge-track" cx="${size/2}" cy="${size/2}" r="${r}" stroke-width="${stroke}"/>
+      <circle class="gauge-fill" cx="${size/2}" cy="${size/2}" r="${r}" stroke-width="${stroke}"
+        stroke="${col}" stroke-dasharray="${c}" stroke-dashoffset="${off}"/>
+    </svg>
+    <div class="gauge-center">
+      <div class="gauge-num" style="font-size:${size*0.26}px;">${pct}%</div>
+      ${label? `<div class="gauge-label">${label}</div>`:""}
+    </div>
+  </div>`;
+}
+
+/* ---------- SHARED CHROME ---------- */
+function topbar(title, opts={}){
+  return `<div class="topbar">
+    ${opts.back? `<div class="iconbtn" onclick="go('${opts.back}')">${icon("back")}</div>`:""}
+    <div style="flex:1">
+      ${opts.eyebrow?`<div class="eyebrow">${opts.eyebrow}</div>`:""}
+      <div class="h2">${title}</div>
+    </div>
+    ${opts.right||""}
+  </div>`;
+}
+function pill(level, text){
+  return `<span class="pill ${level}"><span class="badge-dot" style="background:${level==='low'?'#2E9D68':level==='medium'?'#E8A317':'#D9534F'}"></span>${text}</span>`;
+}
+
+/* ================= VIEWS ================= */
+
+function viewSplash(){
+  return `<div class="splash">
+    <div class="logo">${icon("leafshield")}</div>
+    <div class="word">AGROGON</div>
+    <div class="tag">Your Farm. Your Data. Your Intelligent Crop Guardian.</div>
+    <div class="barwrap"><div class="bar"></div></div>
+  </div>`;
+}
+
+const ONB = [
+  {eyebrow:"01", title:"Know Your Crop", body:"Use AI-powered crop scanning to identify possible diseases and pests early.", bg:"#DCEEDF", art:"scan"},
+  {eyebrow:"02", title:"Protect Your Farm", body:"Monitor crop health, weather conditions and disease risks in one place.", bg:"#E8F0E9", art:"map"},
+  {eyebrow:"03", title:"Act Precisely", body:"Use AI-generated treatment zones for precise and efficient field intervention.", bg:"#EFE7D8", art:"drone"},
+];
+function viewOnboarding(){
+  const i = state.onbIdx, o = ONB[i];
+  return `<div class="onb">
+    <button class="skip" onclick="go('login')">Skip</button>
+    <div class="onb-art" style="background:${o.bg}">
+      <div style="width:150px;height:150px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow);color:var(--primary)">
+        <div style="width:70px;height:70px">${icon(o.art)}</div>
+      </div>
+    </div>
+    <div class="onb-dots">${ONB.map((_,idx)=>`<span class="dot ${idx===i?'on':''}"></span>`).join("")}</div>
+    <div class="onb-body stack">
+      <div class="eyebrow">STEP ${o.eyebrow}</div>
+      <h1 class="h1">${o.title}</h1>
+      <p class="muted">${o.body}</p>
+      <button class="btn btn-primary" onclick="${i<ONB.length-1? `state.onbIdx=${i+1}; go('onboarding')`:`go('login')`}">
+        ${i<ONB.length-1? "Next":"Get Started"} ${icon("chev","")}
+      </button>
+    </div>
+  </div>`;
+}
+
+function viewLogin(){
+  return `<div class="stack" style="padding:34px 24px;">
+    <div style="width:56px;height:56px">${icon("leafshield")}</div>
+    <div>
+      <h1 class="h1">Welcome back</h1>
+      <p class="muted">Log in with your mobile number to access your farm.</p>
+    </div>
+    <div class="field">
+      <label>Mobile Number</label>
+      <input type="tel" placeholder="+91 98450 12345" value="+91 98450 12345">
+    </div>
+    <div class="field">
+      <label>AgroGon Farmer ID <span class="muted">(optional)</span></label>
+      <input type="text" placeholder="AGG-KA-000124">
+    </div>
+    <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:#5E7568;">
+      <input type="checkbox" checked style="width:16px;height:16px;accent-color:var(--primary);"> Remember me
+    </label>
+    <button class="btn btn-primary" onclick="go('otp')">Send OTP</button>
+    <button class="btn btn-ghost" onclick="go('register')">New farmer? Create an account</button>
+    <div style="text-align:center;"><a style="color:var(--secondary);font-size:12.5px;font-weight:600;text-decoration:none;">Need help?</a></div>
+    <div class="divider"></div>
+    <button class="btn btn-secondary" onclick="go('dashboard',{demoMode:true})">▶ Continue in Demo Mode</button>
+  </div>`;
+}
+
+function viewRegister(){
+  return `${topbar("Farmer Registration",{back:"login"})}
+  <div class="section stack">
+    <div class="field"><label>Full Name</label><input placeholder="e.g. Ravi Kumar"></div>
+    <div class="field"><label>Mobile Number</label><input placeholder="+91"></div>
+    <div class="field"><label>Preferred Language</label>
+      <select><option>English</option><option>Kannada</option><option>Telugu</option><option>Hindi</option></select></div>
+    <div class="hgap10">
+      <div class="field" style="flex:1"><label>State</label><input placeholder="Karnataka"></div>
+      <div class="field" style="flex:1"><label>District</label><input placeholder="Chikkaballapur"></div>
+    </div>
+    <div class="field"><label>Village</label><input placeholder="Hosahalli"></div>
+    <div class="hgap10">
+      <div class="field" style="flex:1"><label>Primary Crop</label><input placeholder="Tomato"></div>
+      <div class="field" style="flex:1"><label>Farm Area</label><input placeholder="2.7 acres"></div>
+    </div>
+    <button class="btn btn-primary" onclick="go('registerDone')">Create My AgroGon ID</button>
+  </div>`;
+}
+function viewRegisterDone(){
+  return `<div class="stack" style="padding:40px 24px; text-align:center; align-items:center;">
+    <div style="width:64px;height:64px;border-radius:50%;background:#E7F5EC;display:flex;align-items:center;justify-content:center;color:var(--primary)">${icon("check","")}</div>
+    <h2 class="h2">Your AgroGon Farmer ID</h2>
+    <div class="card" style="width:100%;">
+      <div class="mono" style="font-size:22px;font-weight:700;letter-spacing:1px;color:var(--primary);text-align:center;">AGG-KA-000124</div>
+    </div>
+    <div class="hgap10" style="width:100%;">
+      <button class="btn btn-secondary btn-sm" style="flex:1" onclick="showToast('Farmer ID copied')">${icon("copy","")} Copy ID</button>
+      <button class="btn btn-secondary btn-sm" style="flex:1" onclick="showToast('Share sheet opened')">Share ID</button>
+    </div>
+    <button class="btn btn-primary" onclick="go('login')">Continue</button>
+  </div>`;
+}
+
+function viewOtp(){
+  return `<div class="stack" style="padding:40px 24px;">
+    <h1 class="h1">Verify your number</h1>
+    <p class="muted">Enter the 4-digit code sent to +91 98450 12345</p>
+    <div class="hgap10" style="justify-content:center;">
+      ${[0,1,2,3].map(i=>`<input class="field" maxlength="1" value="${i<2?'•':''}" style="width:52px;height:58px;text-align:center;font-size:22px;border:1.5px solid var(--mist);border-radius:12px;background:var(--mist-2);"/>`).join("")}
+    </div>
+    <p class="muted" style="text-align:center;">Didn't get a code? <a style="color:var(--secondary);font-weight:600;">Resend</a></p>
+    <button class="btn btn-primary" onclick="go('dashboard')">Verify & Continue</button>
+  </div>`;
+}
+
+function viewDashboard(){
+  const w = DEMO.weather, f = DEMO.farm, h = DEMO.health;
+  return `
+  <div class="section">
+    <div class="row">
+      <div>
+        <div class="muted">Good morning,</div>
+        <div class="h1">Ravi 👋</div>
+        <div class="mono" style="font-size:11.5px;color:#8AA093;margin-top:2px;">${DEMO.farmer.id}</div>
+      </div>
+      <div class="hgap8">
+        <div class="iconbtn" onclick="go('notifications')" style="position:relative;">${icon("bell")}<span style="position:absolute;top:6px;right:7px;width:7px;height:7px;background:var(--danger);border-radius:50%;"></span></div>
+        <div class="iconbtn" onclick="go('profile')">${icon("profile")}</div>
+      </div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="card" style="background:linear-gradient(135deg,#1B7F4C,#12352A); color:#fff; border:none;">
+      <div class="row">
+        <div>
+          <div style="font-size:32px;font-weight:800;font-family:var(--font-head)">${w.temp}°C</div>
+          <div style="font-size:13px;opacity:0.85">${w.cond} · ${w.humidity}% humidity</div>
+        </div>
+        <div style="font-size:38px;">⛅</div>
+      </div>
+      <div class="divider" style="background:rgba(255,255,255,0.15)"></div>
+      <div class="muted" style="color:#CFE7D8;font-size:12px;">💧 High humidity may increase disease risk today</div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="row" style="margin-bottom:10px;">
+      <div class="h3">MY FARM</div>
+      <a onclick="go('farm')" style="font-size:12px;color:var(--secondary);font-weight:700;cursor:pointer;">View farm →</a>
+    </div>
+    <div class="card">
+      <div class="row">
+        <div class="stack" style="gap:6px;">
+          <div class="muted"><b style="color:var(--dark)">${f.area}</b> · ${f.crop}</div>
+          <div class="muted">Stage: <b style="color:var(--dark)">${f.stage}</b></div>
+        </div>
+        ${gauge(h.overall,88,9,null,"Healthy")}
+      </div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="hgap10" style="flex-wrap:wrap;">
+      <div class="card tight" style="flex:1;min-width:44%;">
+        <div class="row"><span class="muted">🦠 Disease Risk</span></div>
+        <div style="margin-top:6px;">${pill(h.disease,h.disease.toUpperCase())}</div>
+      </div>
+      <div class="card tight" style="flex:1;min-width:44%;">
+        <div class="row"><span class="muted">🐛 Pest Risk</span></div>
+        <div style="margin-top:6px;">${pill(h.pest,h.pest.toUpperCase())}</div>
+      </div>
+      <div class="card tight" style="flex:1;min-width:44%;">
+        <div class="row"><span class="muted">💧 Soil Moisture</span></div>
+        <div class="h3" style="margin-top:6px;">${h.soilMoisture}%</div>
+      </div>
+      <div class="card tight" style="flex:1;min-width:44%;">
+        <div class="row"><span class="muted">🌦️ Weather Risk</span></div>
+        <div style="margin-top:6px;">${pill("low","LOW")}</div>
+      </div>
+    </div>
+  </div>
+  <div class="section">
+    <button class="btn btn-primary" style="padding:18px;font-size:16px;" onclick="go('scanner')">${icon("camera","")} SCAN MY CROP</button>
+  </div>
+  <div class="section">
+    <div class="row" style="margin-bottom:10px;"><div class="h3">Recent Alerts</div><a onclick="go('alerts')" style="font-size:12px;color:var(--secondary);font-weight:700;cursor:pointer;">See all →</a></div>
+    <div class="card tight" style="border-left:3px solid var(--danger);">
+      <div class="row"><span style="font-size:13px;font-weight:600;">⚠️ Early Blight reported 1.8 km away</span></div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="h3" style="margin-bottom:10px;">Today's Recommendation</div>
+    <div class="card tight" style="background:#FFF8E9; border-color:#F3E1AE;">
+      <div class="muted" style="color:#7A5B0A;">Humidity is high today. Inspect tomato leaves for early disease symptoms.</div>
+    </div>
+  </div>`;
+}
+
+function viewFarm(){
+  const f = DEMO.farm;
+  return `${topbar("My Farm",{eyebrow:DEMO.farmer.id})}
+  <div class="section stack">
+    <div class="fieldmap">
+      ${DEMO.zones.map(z=>`<div class="zone" style="top:${z.top};left:${z.left};width:${z.w};height:${z.h};background:${z.color};">${z.id}</div>`).join("")}
+    </div>
+    <button class="btn btn-secondary btn-sm" onclick="go('landmap')">${icon("map","")} View Full Map</button>
+    <div class="card stack" style="gap:10px;">
+      ${[["Farm name",f.name],["Farm ID",DEMO.farmer.id],["Area",f.area],["Crop",f.crop],["Variety",f.variety],["Sowing date",f.sowing],["Growth stage",f.stage],["Irrigation",f.irrigation]]
+        .map(([k,v])=>`<div class="row"><span class="muted">${k}</span><b style="font-size:13.5px;">${v}</b></div>`).join("")}
+    </div>
+    <div class="h3">Field Health Overlay</div>
+    <div class="hgap10">
+      <div class="hgap8" style="align-items:center;"><span class="badge-dot" style="background:#2E9D68"></span><span class="muted">Healthy</span></div>
+      <div class="hgap8" style="align-items:center;"><span class="badge-dot" style="background:#E8A317"></span><span class="muted">Monitor</span></div>
+      <div class="hgap8" style="align-items:center;"><span class="badge-dot" style="background:#D9534F"></span><span class="muted">High risk</span></div>
+    </div>
+    <div class="divider"></div>
+    <div class="h3">Registered Fields</div>
+    <div class="card tight row"><div><b>Field 01</b><div class="muted">Tomato</div></div><b>2.7 acres</b></div>
+    <div class="card tight row"><div><b>Field 02</b><div class="muted">Rice</div></div><b>1.4 acres</b></div>
+    <button class="btn btn-ghost" onclick="go('landmap')">+ Add another field</button>
+  </div>`;
+}
+
+function viewLandmap(){
+  return `${topbar("Digital Land Mapping",{back:"farm"})}
+  <div class="section stack">
+    <div class="fieldmap" style="height:220px;">
+      <div style="position:absolute;inset:0;border:2.5px dashed var(--primary);margin:14px;border-radius:14px;"></div>
+      ${[["18%","20%"],["70%","16%"],["78%","72%"],["14%","76%"]].map(([t,l])=>`<div style="position:absolute;top:${t};left:${l};width:10px;height:10px;background:var(--primary);border:2px solid #fff;border-radius:50%;box-shadow:0 2px 4px rgba(0,0,0,0.2);"></div>`).join("")}
+      <div style="position:absolute;bottom:10px;right:10px;background:#fff;padding:4px 10px;border-radius:8px;font-size:11px;font-weight:700;color:var(--primary);box-shadow:var(--shadow-sm)">2.7 acres</div>
+    </div>
+    <div class="hgap10">
+      <button class="btn btn-secondary btn-sm" style="flex:1" onclick="showToast('Using current GPS location')">${icon("pin","")} Use GPS</button>
+      <button class="btn btn-secondary btn-sm" style="flex:1" onclick="showToast('Tap the map to add boundary points')">Draw Boundary</button>
+    </div>
+    <div class="card tight muted">Tap corners of your field on the map, or use GPS to auto-mark your current location. AgroGon calculates the area automatically.</div>
+    <button class="btn btn-primary" onclick="landmapSave()">Save Field</button>
+  </div>`;
+}
+function landmapSave(){
+  showToast("Farm successfully registered ✓");
+  setTimeout(()=>go('farm'), 900);
+}
+
+function viewScanner(){
+  if(state.scanStage==="capture"){
+    return `${topbar("Scan Your Crop",{back:"dashboard"})}
+    <div class="section stack">
+      <div class="scanview" style="border-radius:18px;">
+        <div style="color:#8AA093;text-align:center;padding:20px;">
+          <div style="width:56px;height:56px;margin:0 auto 10px;opacity:0.7;">${icon("camera","")}</div>
+          <div style="font-size:12.5px;color:#BFE0CC;">Camera preview</div>
+        </div>
+        <div class="scan-frame"></div>
+      </div>
+      <div class="card tight muted" style="text-align:center;">📸 Capture a clear image of the affected leaf or plant.</div>
+      <div class="hgap10">
+        <button class="btn btn-primary" style="flex:1" onclick="startScan()">${icon("camera","")} Take Photo</button>
+        <button class="btn btn-secondary" style="flex:1" onclick="startScan()">${icon("gallery","")} Upload</button>
+      </div>
+    </div>`;
+  }
+  if(state.scanStage==="analyzing"){
+    setTimeout(()=>{ state.scanStage="result"; render(); }, 2400);
+    return `<div class="scanview" style="height:100%;">
+      <div class="scanline"></div>
+      <div style="color:#EAF3EC;text-align:center;z-index:2;">
+        <div style="width:64px;height:64px;margin:0 auto 16px;color:var(--accent);animation:leafPulse 1.4s infinite;">${icon("scan","")}</div>
+        <div class="h3" style="color:#fff;">Analyzing crop...</div>
+        <div class="muted" style="color:#9FC7AE;margin-top:6px;">Checking image quality → identifying crop → detecting symptoms</div>
+      </div>
+    </div>`;
+  }
+  return viewDiseaseResult();
+}
+function startScan(){ state.scanStage="analyzing"; render(); }
+
+function viewDiseaseResult(){
+  const d = DEMO.disease;
+  return `${topbar("Scan Result",{back:"dashboard"})}
+  <div class="section stack">
+    <div class="card" style="padding:0;overflow:hidden;">
+      <div style="height:150px;background:linear-gradient(135deg,#2E9D68,#12352A);display:flex;align-items:center;justify-content:center;color:#fff;">
+        <div style="width:50px;height:50px;opacity:0.85">${icon("virus","")}</div>
+      </div>
+      <div style="padding:16px;">
+        <div class="eyebrow">${d.crop.toUpperCase()} · AI CROP SCAN</div>
+        <div class="row" style="margin-top:4px;">
+          <h2 class="h2">Possible ${d.name}</h2>
+          ${pill("medium", d.severity)}
+        </div>
+        <div class="muted" style="margin-top:4px;">${d.distanceNote}</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="row"><span class="muted">AI Confidence</span><b class="mono" style="color:var(--primary)">${d.confidence}%</b></div>
+      <div style="height:8px;background:var(--mist);border-radius:6px;margin-top:8px;overflow:hidden;">
+        <div style="height:100%;width:${d.confidence}%;background:linear-gradient(90deg,var(--secondary),var(--primary));"></div>
+      </div>
+      <div class="row" style="margin-top:14px;"><span class="muted">Severity</span><b>${d.severity}</b></div>
+      <div style="height:8px;background:var(--mist);border-radius:6px;margin-top:8px;overflow:hidden;">
+        <div style="height:100%;width:${d.severityPct}%;background:linear-gradient(90deg,var(--warning),var(--danger));"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="h3">What this means</div>
+      <p class="muted" style="margin-top:6px;">Early Blight is a common fungal condition that shows up as dark concentric spots on lower leaves. It spreads faster in warm, humid weather like today's forecast.</p>
+    </div>
+    <div class="card">
+      <div class="h3">What you can do</div>
+      <div class="stack" style="gap:10px;margin-top:8px;">
+        ${["Remove and dispose of visibly affected leaves","Improve airflow — avoid overhead watering","Follow locally approved agricultural guidance for treatment","Re-scan in 3 days to track progress"]
+          .map(t=>`<div class="hgap10" style="align-items:flex-start;"><span style="color:var(--primary);margin-top:2px;">${icon("check","")}</span><span class="muted" style="color:var(--ink)">${t}</span></div>`).join("")}
+      </div>
+    </div>
+    <button class="btn btn-primary" onclick="go('advisory')">View Detailed Advisory</button>
+    <button class="btn btn-secondary" onclick="go('treatment')">Monitor Field</button>
+    <button class="btn btn-ghost" onclick="showToast('Report submitted to hyperlocal network')">Report Disease to Community</button>
+    <div class="muted" style="text-align:center;font-size:11.5px;">AI results are estimates, not guaranteed diagnoses.</div>
+  </div>`;
+}
+
+function viewRisk(){
+  return `${topbar("Crop Risk",{back:"dashboard"})}
+  <div class="section stack">
+    <div class="card tight row" style="border-left:3px solid var(--danger);">
+      <span><b>Disease Risk</b></span>${pill("high","HIGH 🔴")}
+    </div>
+    <div class="card tight row" style="border-left:3px solid var(--warning);">
+      <span><b>Pest Risk</b></span>${pill("medium","MEDIUM 🟡")}
+    </div>
+    <div class="card tight row" style="border-left:3px solid var(--secondary);">
+      <span><b>Water Stress</b></span>${pill("low","LOW 🟢")}
+    </div>
+    <div class="card">
+      <div class="h3">Why is disease risk high?</div>
+      <div class="stack" style="gap:8px;margin-top:8px;">
+        ${["High humidity (72%)","Recent rainfall in the area","Temperature suited for fungal growth","3 nearby farms reported similar symptoms"]
+          .map(t=>`<div class="muted">• ${t}</div>`).join("")}
+      </div>
+    </div>
+    <div class="card" style="background:#FFF8E9;border-color:#F3E1AE;">
+      <div class="h3" style="color:#7A5B0A;">Recommended Action</div>
+      <p class="muted" style="color:#7A5B0A;margin-top:4px;">Inspect affected crop zones today, especially the lower canopy of Zone D.</p>
+    </div>
+    <button class="btn btn-primary" onclick="go('treatment')">Open Treatment Map</button>
+  </div>`;
+}
+
+function viewAlerts(){
+  return `${topbar("Hyperlocal Alerts",{eyebrow:DEMO.farmer.village+", "+DEMO.farmer.district})}
+  <div class="section">
+    <div class="fieldmap" style="height:170px;">
+      <div style="position:absolute;top:50%;left:50%;width:10px;height:10px;background:var(--primary);border-radius:50%;transform:translate(-50%,-50%);box-shadow:0 0 0 6px rgba(27,127,76,0.15);"></div>
+      <div style="position:absolute;top:32%;left:66%;width:9px;height:9px;background:var(--danger);border-radius:50%;box-shadow:0 0 0 8px rgba(217,83,79,0.18);"></div>
+      <div style="position:absolute;top:64%;left:30%;width:9px;height:9px;background:var(--warning);border-radius:50%;box-shadow:0 0 0 8px rgba(232,163,23,0.18);"></div>
+      <div style="position:absolute;bottom:8px;left:8px;background:#fff;padding:3px 9px;border-radius:8px;font-size:10.5px;font-weight:700;color:var(--dark);box-shadow:var(--shadow-sm)">📍 You are here · exact location kept private</div>
+    </div>
+  </div>
+  <div class="section stack">
+    ${DEMO.alerts.map(a=>`
+      <div class="card tight hgap10" style="align-items:flex-start;border-left:3px solid ${a.sev==='high'?'var(--danger)':a.sev==='medium'?'var(--warning)':'var(--secondary)'};">
+        <div style="width:34px;height:34px;border-radius:10px;background:${a.sev==='high'?'#FBE8E7':a.sev==='medium'?'#FDF3DB':'#E7F5EC'};display:flex;align-items:center;justify-content:center;color:${a.sev==='high'?'var(--danger)':a.sev==='medium'?'#9A6B0A':'var(--primary)'};flex:0 0 auto;">${icon(a.icon,"")}</div>
+        <div style="flex:1;">
+          <div class="row"><b style="font-size:13.5px;">${a.title}</b><span class="muted" style="font-size:11px;">${a.time}</span></div>
+          <div class="muted">${a.meta}</div>
+        </div>
+      </div>`).join("")}
+    <button class="btn btn-secondary" onclick="showToast('Nearby farmers notified')">🔔 Alert Nearby Farmers</button>
+  </div>`;
+}
+
+const QUICK = [
+  {t:"Disease Help", r:"Watch for dark spots on lower leaves and remove them early. Avoid wetting leaves when watering."},
+  {t:"Pest Help", r:"A few aphids are normal. If you see curling leaves or sticky residue, monitor twice a week."},
+  {t:"Water Advice", r:"Soil moisture is at 61% — that's healthy for tomato flowering stage. No extra irrigation needed today."},
+  {t:"Fertilizer Advice", r:"Follow your local Krishi Vigyan Kendra's recommended dose for flowering-stage tomato. Avoid excess nitrogen."},
+  {t:"Weather Advice", r:"Humidity is high today, which raises disease risk. Good day to inspect rather than irrigate."},
+];
+function viewAdvisory(){
+  return `${topbar("AgroGon Assistant",{back:"dashboard", eyebrow:"AI ADVISORY · "+DEMO.farmer.lang.toUpperCase()})}
+  <div class="section" style="display:flex;gap:8px;overflow-x:auto;padding-bottom:2px;">
+    <select style="border:1px solid var(--mist);border-radius:100px;padding:6px 10px;font-size:12px;background:#fff;">
+      <option>English</option><option>ಕನ್ನಡ Kannada</option><option>తెలుగు Telugu</option><option>हिन्दी Hindi</option>
+    </select>
+  </div>
+  <div class="section stack" style="gap:10px;padding-bottom:8px;">
+    ${state.chat.map(m=>`<div class="msg ${m.who}">${m.text}</div>`).join("")}
+  </div>
+  <div class="section scroll-x">
+    ${QUICK.map((q,i)=>`<div class="chip" style="cursor:pointer;" onclick="askQuick(${i})">${q.t}</div>`).join("")}
+  </div>
+  <div class="section">
+    <div class="hgap10">
+      <input class="field" style="flex:1;border:1.5px solid var(--mist);border-radius:100px;padding:12px 16px;background:var(--mist-2);" placeholder="My leaves are turning yellow...">
+      <button class="iconbtn" style="background:var(--primary);color:#fff;border:none;" onclick="askQuick(0)">${icon("chat","")}</button>
+    </div>
+  </div>`;
+}
+function askQuick(i){
+  state.chat.push({who:"user", text:QUICK[i].t});
+  state.chat.push({who:"bot", text:QUICK[i].r});
+  go('advisory');
+}
+
+function viewSensors(){
+  const s = DEMO.sensor;
+  const items = [
+    {l:"Soil Moisture", v:s.moisture+"%", pct:s.moisture, icon:"droplet"},
+    {l:"Temperature", v:s.temp+"°C", pct:Math.min(100,s.temp*2.2), icon:"cloud"},
+    {l:"Humidity", v:s.humidity+"%", pct:s.humidity, icon:"cloud"},
+    {l:"Soil pH", v:s.ph, pct:(s.ph/14)*100, icon:"gauge"},
+  ];
+  return `${topbar("Field Sensors",{back:"dashboard"})}
+  <div class="section">
+    <div class="card tight row">
+      <span class="hgap8" style="align-items:center;"><span class="badge-dot" style="background:${s.online?'var(--secondary)':'var(--danger)'}"></span><b>${s.online?"Sensor Online":"Sensor Offline"}</b></span>
+      <span class="muted">Synced ${s.lastSync}</span>
+    </div>
+  </div>
+  <div class="section" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+    ${items.map(it=>`
+      <div class="card" style="align-items:center;text-align:center;">
+        <div class="muted" style="margin-bottom:6px;">${it.l}</div>
+        ${gauge(Math.round(it.pct),88,8)}
+        <div class="h3" style="margin-top:8px;">${it.v}</div>
+      </div>`).join("")}
+  </div>
+  <div class="section">
+    <div class="card tight muted">☀️ Light level: <b style="color:var(--dark)">Normal</b></div>
+  </div>`;
+}
+
+function viewTreatment(){
+  return `${topbar("Precision Treatment Map",{back:"dashboard", eyebrow:DEMO.farm.area})}
+  <div class="section">
+    <div class="fieldmap" style="height:220px;">
+      ${DEMO.zones.map(z=>`<div class="zone" style="top:${z.top};left:${z.left};width:${z.w};height:${z.h};background:${z.color};" onclick="go('zoneDetail',{activeZone:'${z.id}'})">${z.label}</div>`).join("")}
+    </div>
+  </div>
+  <div class="section stack">
+    ${DEMO.zones.map(z=>`
+      <div class="card tight row" onclick="go('zoneDetail',{activeZone:'${z.id}'})" style="cursor:pointer;">
+        <div class="hgap10" style="align-items:center;">
+          <span style="width:12px;height:12px;border-radius:4px;background:${z.color};display:inline-block;"></span>
+          <div><b style="font-size:13.5px;">${z.label}</b><div class="muted">${z.cond}</div></div>
+        </div>
+        <span style="color:#8AA093;">${icon("chev","")}</span>
+      </div>`).join("")}
+    <button class="btn btn-primary" onclick="go('drone')">${icon("drone","")} Create Treatment Plan</button>
+  </div>`;
+}
+function viewZoneDetail(){
+  const z = DEMO.zones.find(z=>z.id===(state.activeZone||"D"));
+  return `${topbar(z.label,{back:"treatment"})}
+  <div class="section stack">
+    <div class="card" style="border-left:4px solid ${z.color}">
+      <div class="row"><b>Condition</b><span>${z.cond}</span></div>
+      <div class="row" style="margin-top:8px;"><b>Confidence</b><span class="mono">${z.conf}%</span></div>
+      <div class="row" style="margin-top:8px;"><b>Last detected</b><span>Today, 8:40 AM</span></div>
+      <div class="row" style="margin-top:8px;"><b>Recommended monitoring</b><span>Every 2 days</span></div>
+    </div>
+    <div class="card">
+      <div class="h3">Suggested action</div>
+      <p class="muted" style="margin-top:6px;">${z.action}</p>
+    </div>
+    <button class="btn btn-primary" onclick="go('drone',{targetZone:z.id})">Plan Drone Mission for ${z.label}</button>
+  </div>`;
+}
+
+function viewDroneHome(){
+  return `${topbar("Precision Drone",{back:"treatment"})}
+  <div class="section">
+    <div class="card">
+      <div class="row"><span class="muted">Drone Status</span><span class="pill low">READY</span></div>
+      <div class="divider"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div><div class="muted">Battery</div><b>82%</b></div>
+        <div><div class="muted">GPS</div><b>Connected</b></div>
+        <div><div class="muted">Tank</div><b>64%</b></div>
+        <div><div class="muted">Mission</div><b>Not started</b></div>
+      </div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="fieldmap" style="height:180px;">
+      ${DEMO.zones.map(z=>`<div class="zone" style="top:${z.top};left:${z.left};width:${z.w};height:${z.h};background:${z.color};opacity:${z.id==='D'?0.95:0.35}">${z.id}</div>`).join("")}
+    </div>
+  </div>
+  <div class="section stack">
+    <div class="card tight">
+      <div class="eyebrow">MISSION #AG-1024</div>
+      <div class="row" style="margin-top:4px;"><span class="muted">Target</span><b>Zone D</b></div>
+      <div class="row"><span class="muted">Operation</span><b>Targeted application</b></div>
+      <div class="row"><span class="muted">Estimated area</span><b>0.35 acres</b></div>
+    </div>
+    <div class="card tight muted" style="background:#FFF8E9;border-color:#F3E1AE;color:#7A5B0A;">⚠️ Drone missions require your approval before takeoff. AgroGon never sprays automatically.</div>
+    <button class="btn btn-primary" onclick="state.missionStage=0; go('missionSim')">Create Mission</button>
+  </div>`;
+}
+
+const MISSION_STEPS = [
+  {t:"Mission Planning", d:"Route generated across Zone D (0.35 acres)."},
+  {t:"Farmer Approval", d:"Awaiting your confirmation to proceed."},
+  {t:"Drone Taking Off", d:"AG-1024 has left the launch pad."},
+  {t:"Flying to Zone", d:"En route to Zone D, ETA 40 seconds."},
+  {t:"Target Zone Reached", d:"Drone positioned over treatment area."},
+  {t:"Application in Progress", d:"Targeted treatment being applied."},
+  {t:"Mission Completed", d:"0.35 acres treated successfully."},
+];
+function viewMissionSim(){
+  const stage = state.missionStage;
+  const dronePos = [
+    {top:"85%",left:"10%"},{top:"85%",left:"10%"},{top:"70%",left:"20%"},
+    {top:"50%",left:"45%"},{top:"30%",left:"68%"},{top:"30%",left:"68%"},{top:"30%",left:"68%"},
+  ][stage];
+  return `${topbar("Mission #AG-1024",{back:"drone"})}
+  <div class="section">
+    <div class="fieldmap" style="height:190px;">
+      ${DEMO.zones.map(z=>`<div class="zone" style="top:${z.top};left:${z.left};width:${z.w};height:${z.h};background:${z.color};opacity:${z.id==='D'?0.9:0.25}">${z.id}</div>`).join("")}
+      <div class="dronedot" style="top:${dronePos.top};left:${dronePos.left};">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#12352A" stroke-width="2"><circle cx="12" cy="12" r="2.4" fill="#F4B942"/><path d="M12 9.6V6M12 14.4V18M9.6 12H6M14.4 12H18"/><circle cx="5" cy="5" r="2.2"/><circle cx="19" cy="5" r="2.2"/><circle cx="5" cy="19" r="2.2"/><circle cx="19" cy="19" r="2.2"/></svg>
+      </div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="card stepper">
+      ${MISSION_STEPS.map((s,i)=>`
+        <div class="stepitem">
+          <div class="stepline">
+            <div class="stepcircle" style="background:${i<stage?'#2E9D68':i===stage?'#F4B942':'var(--mist)'};color:${i<=stage?'#fff':'#8AA093'};">${i<stage?'✓':i+1}</div>
+            ${i<MISSION_STEPS.length-1?`<div class="stepbar" style="background:${i<stage?'#2E9D68':'var(--mist)'}"></div>`:""}
+          </div>
+          <div style="padding-bottom:16px;">
+            <b style="font-size:13.5px;color:${i<=stage?'var(--dark)':'#8AA093'}">${s.t}</b>
+            ${i===stage?`<div class="muted" style="margin-top:2px;">${s.d}</div>`:""}
+          </div>
+        </div>`).join("")}
+    </div>
+  </div>
+  <div class="section">
+    ${stage===1?`<button class="btn btn-primary" onclick="approveMission()">Approve & Launch Mission</button>`
+      : stage<MISSION_STEPS.length-1 ? `<button class="btn btn-secondary" onclick="advanceMission()">Simulate Next Step →</button>`
+      : `<button class="btn btn-primary" onclick="go('dashboard')">View Updated Crop Health</button>`}
+  </div>`;
+}
+function advanceMission(){ if(state.missionStage<MISSION_STEPS.length-1){ state.missionStage++; go('missionSim'); if(state.missionStage===1) setTimeout(()=>{},0);} }
+function approveMission(){ state.missionStage=2; go('missionSim'); showToast("Mission approved — drone launching"); autoRun(); }
+function autoRun(){
+  const timer = setInterval(()=>{
+    if(state.view!=="missionSim"){ clearInterval(timer); return; }
+    if(state.missionStage<MISSION_STEPS.length-1){ state.missionStage++; render(); }
+    else clearInterval(timer);
+  }, 1300);
+}
+
+function viewHistory(){
+  return `${topbar("Farm History",{back:"profile"})}
+  <div class="section">
+    <div class="card stepper">
+      ${DEMO.history.map((h,i)=>`
+        <div class="stepitem">
+          <div class="stepline">
+            <div class="stepcircle" style="background:${h.sev==='high'?'#FBE8E7':h.sev==='medium'?'#FDF3DB':'#E7F5EC'};color:${h.sev==='high'?'var(--danger)':h.sev==='medium'?'#9A6B0A':'var(--primary)'};">${icon(h.icon,"")}</div>
+            ${i<DEMO.history.length-1?`<div class="stepbar" style="background:var(--mist)"></div>`:""}
+          </div>
+          <div style="padding-bottom:18px;">
+            <div class="muted mono" style="font-size:11px;">${h.date}</div>
+            <b style="font-size:13.5px;">${h.title}</b>
+            <div class="muted">${h.sub}</div>
+          </div>
+        </div>`).join("")}
+    </div>
+  </div>`;
+}
+
+function viewNotifications(){
+  const items=[
+    {sev:"high", icon:"virus", t:"Early Blight risk is high today", s:"Based on humidity and nearby reports", time:"10m ago"},
+    {sev:"medium", icon:"drone", t:"Mission #AG-1024 completed", s:"Zone D treated successfully", time:"2h ago"},
+    {sev:"low", icon:"droplet", t:"Soil moisture synced", s:"61% — within healthy range", time:"3h ago"},
+    {sev:"medium", icon:"bug", t:"Aphid activity nearby", s:"3.2 km away", time:"6h ago"},
+    {sev:"low", icon:"cloud", t:"Weather update", s:"Rain expected tomorrow morning", time:"1d ago"},
+  ];
+  return `${topbar("Notifications",{back:"dashboard"})}
+  <div class="section stack">
+    ${items.map(n=>`
+      <div class="card tight hgap10" style="align-items:flex-start;">
+        <div style="width:34px;height:34px;border-radius:10px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;background:${n.sev==='high'?'#FBE8E7':n.sev==='medium'?'#FDF3DB':'#E7F5EC'};color:${n.sev==='high'?'var(--danger)':n.sev==='medium'?'#9A6B0A':'var(--primary)'};">${icon(n.icon,"")}</div>
+        <div style="flex:1;">
+          <b style="font-size:13.5px;">${n.t}</b>
+          <div class="muted">${n.s}</div>
+          <div class="muted mono" style="font-size:10.5px;margin-top:2px;">${n.time}</div>
+        </div>
+      </div>`).join("")}
+  </div>`;
+}
+
+function viewProfile(){
+  const f = DEMO.farmer;
+  const rows = [
+    {l:"My Farms", v:"2 fields", to:"farm"},
+    {l:"Farm History", v:"", to:"history"},
+    {l:"Languages", v:f.lang, to:"profile"},
+    {l:"Notifications", v:"", to:"notifications"},
+    {l:"Privacy", v:"", to:"profile"},
+    {l:"Help & Support", v:"", to:"profile"},
+  ];
+  return `${topbar("Profile")}
+  <div class="section">
+    <div class="card" style="text-align:center;">
+      <div style="width:66px;height:66px;border-radius:50%;background:var(--mist-2);display:flex;align-items:center;justify-content:center;margin:0 auto 10px;color:var(--primary);">${icon("profile","")}</div>
+      <div class="h3">${f.name}</div>
+      <div class="mono muted" style="margin-top:2px;">${f.id}</div>
+      <div class="muted" style="margin-top:4px;">${f.phone} · ${f.village}, ${f.district}</div>
+    </div>
+  </div>
+  <div class="section stack">
+    ${rows.map(r=>`
+      <div class="card tight row" style="cursor:pointer;" onclick="go('${r.to}')">
+        <b style="font-size:13.5px;">${r.l}</b>
+        <span class="hgap8" style="align-items:center;color:#8AA093;">${r.v?`<span class="muted">${r.v}</span>`:""} ${icon("chev","")}</span>
+      </div>`).join("")}
+    <button class="btn btn-secondary" onclick="go('login')">Log Out</button>
+    <div class="hgap8" style="justify-content:center;margin-top:6px;">
+      <span class="muted mono" style="font-size:10.5px;">AgroGon v1.0.0 · Demo Build</span>
+    </div>
+  </div>`;
+}
+
+/* ---------- ROUTER TABLE ---------- */
+const VIEWS = {
+  splash: viewSplash, onboarding: viewOnboarding, login: viewLogin, register: viewRegister,
+  registerDone: viewRegisterDone, otp: viewOtp, dashboard: viewDashboard, farm: viewFarm,
+  landmap: viewLandmap, scanner: viewScanner, risk: viewRisk, alerts: viewAlerts,
+  advisory: viewAdvisory, sensors: viewSensors, treatment: viewTreatment, zoneDetail: viewZoneDetail,
+  drone: viewDroneHome, missionSim: viewMissionSim, history: viewHistory, notifications: viewNotifications,
+  profile: viewProfile,
+};
+const NAV_VIEWS = new Set(["dashboard","farm","alerts","profile","sensors","risk"]);
+const NO_STATUSBAR_PAD = new Set(["splash"]);
+
+function render(){
+  const vp = document.getElementById("viewport");
+  const fn = VIEWS[state.view] || viewDashboard;
+  vp.innerHTML = `<div class="view">${fn()}</div>`;
+  // reset scan stage when leaving scanner
+  if(state.view!=="scanner") state.scanStage="capture";
+
+  document.getElementById("demoribbon").style.display = state.demoMode && state.view!=="splash" && state.view!=="onboarding" ? "block":"none";
+
+  const bn = document.getElementById("bottomnav");
+  if(NAV_VIEWS.has(state.view) || state.view==="scanner"){
+    bn.style.display="flex";
+    bn.innerHTML = NAV.map(n=>{
+      if(n.scan) return `<button class="navbtn scanbtn" onclick="state.scanStage='capture'; go('scanner')">${icon(n.icon,"")}<span>${n.label}</span></button>`;
+      const active = state.view===n.id;
+      return `<button class="navbtn ${active?'active':''}" onclick="go('${n.id}')">${icon(n.icon,"")}<span>${n.label}</span></button>`;
+    }).join("");
+  } else {
+    bn.style.display="none";
+  }
+}
+
+/* clock */
+function tickClock(){
+  const d = new Date();
+  let h = d.getHours()%12; if(h===0)h=12;
+  const m = d.getMinutes().toString().padStart(2,"0");
+  document.getElementById("clock").textContent = `${h}:${m}`;
+}
+tickClock(); setInterval(tickClock, 30000);
+
+/* boot sequence */
+render();
+setTimeout(()=>{ if(state.view==="splash") go("onboarding"); }, 2200);
+</script>
+</body>
+</html>

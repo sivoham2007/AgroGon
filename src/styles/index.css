@@ -1,0 +1,48 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap');
+
+@theme {
+  --color-primary: #1B7F4C;
+  --color-secondary: #2E9D68;
+  --color-accent: #F4B942;
+  --color-bg: #F7FAF7;
+  --color-dark: #12352A;
+  --color-danger: #D9534F;
+  --color-warning: #E8A317;
+  --color-success: #2E9D68;
+  --color-ink: #16241D;
+  --color-mist: #E4ECE6;
+  --color-mist-2: #EFF5F0;
+
+  --font-head: 'Manrope', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+
+  --radius-card: 20px;
+  --radius-card-sm: 12px;
+
+  --shadow-card: 0 8px 24px rgba(18,53,42,0.08);
+  --shadow-card-sm: 0 2px 8px rgba(18,53,42,0.06);
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body, #root { height: 100%; margin: 0; }
+body {
+  font-family: var(--font-body);
+  color: var(--color-ink);
+  background: #ededed;
+}
+::-webkit-scrollbar { display: none; }
+
+@keyframes leafPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.06); }
+}
+@keyframes viewIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes scanmove {
+  0% { top: 40px; } 50% { top: 260px; } 100% { top: 40px; }
+}
+.view-enter { animation: viewIn 320ms cubic-bezier(.22,.9,.32,1); }
