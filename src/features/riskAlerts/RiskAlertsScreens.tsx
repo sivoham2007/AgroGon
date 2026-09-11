@@ -97,7 +97,9 @@ export function AlertsScreen() {
       showToast("Friend request sent!");
       // Optimistically update
       setNearbyFarmers(prev => prev.map(f => f.id === targetFarmerId ? { ...f, connectionStatus: 'pending', isSender: true } : f));
-    } catch(e) {}
+    } catch(e) {
+      setError("Failed to send request.");
+    }
   }
 
   return (
