@@ -40,10 +40,42 @@ export function DashboardScreen() {
   const [sensor, setSensor] = useState<SensorReading | null>(null);
 
   useEffect(() => {
-    services.weather.getWeather(farm.id).then(setWeather);
-    services.health.getHealth(farm.id).then(setHealth);
-    services.intelligence.getPriorityActions(farm.id).then(setActions);
-    services.sensor.getReading(farm.id).then(setSensor);
+    let mounted = true;
+
+    Promise.allSettled([
+      services.weather.getWeather(farm.id),
+      services.health.getHealth(farm.id),
+      services.intelligence.getPriorityActions(farm.id),
+      services.sensor.getReading(farm.id),
+    ]).then(([wRes, hRes, aRes, sRes]) => {
+      if (!mounted) return;
+
+      setWeather(
+        wRes.status === "fulfilled" && wRes.value
+          ? wRes.value
+          : { tempC: 0, condition: "Unavailable", humidityPct: 0, rainChancePct: 0, windKph: 0, note: "Offline" }
+      );
+      
+      setHealth(
+        hRes.status === "fulfilled" && hRes.value
+          ? hRes.value
+          : { overallPct: 0, disease: "medium", pest: "medium", water: "medium", nutrient: "medium", soilMoisturePct: 0, soilPh: 7, soilTempC: 0 }
+      );
+      
+      setActions(
+        aRes.status === "fulfilled" && aRes.value ? aRes.value : []
+      );
+      
+      setSensor(
+        sRes.status === "fulfilled" && sRes.value
+          ? sRes.value
+          : { online: false, soilMoisturePct: 0, tempC: 0, humidityPct: 0, ph: 7, light: "Normal", lastSyncedLabel: "Unknown" }
+      );
+    });
+
+    return () => {
+      mounted = false;
+    };
   }, [farm.id]);
 
   if (!weather || !health || !actions || !sensor) return <LoadingState label={t("common_loading")} />;

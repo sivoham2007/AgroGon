@@ -4,6 +4,7 @@ import { AppShell } from "../components/layout/AppShell";
 import { SplashScreen, useSplashGate } from "../components/layout/Splash";
 import { useApp } from "./AppState";
 import { LoadingState } from "../components/ui/Primitives";
+import { ErrorBoundary } from "../components/ui/ErrorBoundary";
 
 import { LandingScreen } from "../features/onboarding/LandingScreen";
 import { OnboardingScreen } from "../features/onboarding/OnboardingScreens";
@@ -48,7 +49,7 @@ export default function App() {
   const showSplash = useSplashGate();
 
   return (
-    <>
+    <ErrorBoundary>
       {showSplash && <SplashScreen />}
       <AppShell>
       <Routes>
@@ -92,6 +93,6 @@ export default function App() {
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       </AppShell>
-    </>
+    </ErrorBoundary>
   );
 }
