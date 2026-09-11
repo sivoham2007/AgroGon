@@ -15,6 +15,9 @@ export interface WeatherWithForecast extends WeatherSnapshot {
   uvIndex: number | null;
   forecast: ForecastDay[];
   fetchedAt: string;
+  feelsLike?: number;
+  sunrise?: string;
+  sunset?: string;
 }
 
 // Real backend weather, proxied through our server (server/src/routes/weather.js)
