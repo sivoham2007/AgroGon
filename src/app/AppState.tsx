@@ -1,7 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
 import { CURRENT_FARMER, CURRENT_FARM } from "../data/seedData";
 import type { Farm, Farmer } from "../types/domain";
-import type { LanguageCode } from "../i18n/translations";
+import { LANGUAGES, type LanguageCode } from "../i18n/translations";
 import { getToken, setToken } from "../services/http/client";
 import { httpProfileService } from "../services/http/profileService";
 
@@ -36,7 +36,10 @@ const AppContext = createContext<AppStateShape | null>(null);
 function getInitialLanguage(): LanguageCode {
   if (typeof window === "undefined") return "en";
   const saved = window.localStorage.getItem(LANGUAGE_KEY);
-  return (saved as LanguageCode) || "en";
+  if (saved && LANGUAGES.some((l) => l.code === saved)) {
+    return saved as LanguageCode;
+  }
+  return "en";
 }
 
 export function AppStateProvider({ children }: { children: ReactNode }) {
