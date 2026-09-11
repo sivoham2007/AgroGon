@@ -11,6 +11,7 @@ import type { AlertItem, AIExplanation } from "../../types/domain";
 import { MapContainer, TileLayer, Marker, Popup, Circle } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
+import { API_BASE_URL } from "../../services/http/client";
 
 // Fix Leaflet's default icon paths
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -89,7 +90,7 @@ export function AlertsScreen() {
   async function sendRequest(targetFarmerId: string) {
     try {
       const token = localStorage.getItem("auth_token");
-      await fetch(`http://localhost:4000/api/connections/request`, {
+      await fetch(`${API_BASE_URL}/connections/request`, {
         method: "POST",
         headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
         body: JSON.stringify({ target_farmer_id: targetFarmerId })

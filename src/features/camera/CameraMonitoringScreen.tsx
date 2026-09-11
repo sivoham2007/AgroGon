@@ -3,6 +3,7 @@ import { Icon } from "../../components/ui/Icon";
 import { Card } from "../../components/cards/Cards";
 import { Pill } from "../../components/ui/Primitives";
 import { PageHeader as ScreenHeader } from "../../components/layout/PageHeader";
+import { API_BASE_URL } from "../../services/http/client";
 
 const EVENTS = [
   { id: "e1", icon: "bug" as const, sev: "medium" as const, title: "Movement detected", meta: "North Field · Camera 01", time: "12 min ago" },
@@ -20,7 +21,7 @@ export function CameraMonitoringScreen() {
   async function loadCameras() {
     try {
       const token = localStorage.getItem("auth_token");
-      const res = await fetch("http://localhost:4000/api/camera", {
+      const res = await fetch(`${API_BASE_URL}/camera`, {
         headers: { "Authorization": `Bearer ${token}` }
       });
       let data = await res.json();
@@ -52,7 +53,7 @@ export function CameraMonitoringScreen() {
   async function addMockCamera() {
     try {
       const token = localStorage.getItem("auth_token");
-      await fetch("http://localhost:4000/api/camera", {
+      await fetch(`${API_BASE_URL}/camera`, {
         method: "POST",
         headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
         body: JSON.stringify({ name: "New Farm Camera" })

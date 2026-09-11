@@ -23,12 +23,22 @@ function AuthBackdrop({ children, wide }: { children: ReactNode; wide?: boolean 
 export function LoginScreen() {
   const navigate = useNavigate();
   const t = useT();
-  const [phone, setPhone] = useState("");
+  const [phone, setPhone] = useState(() => typeof window !== "undefined" ? window.localStorage.getItem("agrogon.remember_phone") || "" : "");
+  const [rememberMe, setRememberMe] = useState(() => typeof window !== "undefined" ? !!window.localStorage.getItem("agrogon.remember_phone") : false);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState("");
 
   async function sendOtp() {
     if (!phone.trim()) { setError("Enter your mobile number."); return; }
+    
+    if (typeof window !== "undefined") {
+      if (rememberMe) {
+        window.localStorage.setItem("agrogon.remember_phone", phone);
+      } else {
+        window.localStorage.removeItem("agrogon.remember_phone");
+      }
+    }
+
     setSending(true);
     setError("");
     try {
@@ -56,7 +66,7 @@ export function LoginScreen() {
       </div>
       <label className="flex items-center gap-2.5 text-[13px] font-medium text-[#5E7568]">
         <span className="relative inline-flex items-center justify-center">
-          <input type="checkbox" defaultChecked className="peer sr-only" />
+          <input type="checkbox" checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} className="peer sr-only" />
           <span className="w-[18px] h-[18px] rounded-[4px] bg-[#E7F4EC] border border-[#2E9D68] flex items-center justify-center transition-colors peer-checked:bg-[var(--color-primary)] peer-checked:border-[var(--color-primary)]">
             <svg viewBox="0 0 24 24" className="hidden peer-checked:block w-[12px] h-[12px] text-white" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
               <path d="M5 12.5l4.2 4.2L19 2.5" />

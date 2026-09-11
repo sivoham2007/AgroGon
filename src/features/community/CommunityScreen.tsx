@@ -5,6 +5,7 @@ import { Card } from "../../components/cards/Cards";
 import { PrimaryButton, Pill } from "../../components/ui/Primitives";
 import { PageHeader as ScreenHeader } from "../../components/layout/PageHeader";
 import { useApp } from "../../app/AppState";
+import { API_BASE_URL } from "../../services/http/client";
 
 const FAQS = [
   { q: "How accurate is the disease detection?", a: "AgroGon shows a confidence percentage with every scan and always phrases results as \"possible\" findings, not confirmed diagnoses. Use it as an early-warning tool alongside your own judgement, not a replacement for it." },
@@ -28,7 +29,7 @@ export function CommunityScreen() {
   async function loadConnections() {
     try {
       const token = localStorage.getItem("auth_token");
-      const res = await fetch("http://localhost:4000/api/connections", {
+      const res = await fetch(`${API_BASE_URL}/connections`, {
         headers: { "Authorization": `Bearer ${token}` }
       });
       const data = await res.json();
@@ -42,7 +43,7 @@ export function CommunityScreen() {
     setLoading(true);
     try {
       const token = localStorage.getItem("auth_token");
-      const res = await fetch(`http://localhost:4000/api/connections/search?query=${encodeURIComponent(searchQuery)}`, {
+      const res = await fetch(`${API_BASE_URL}/connections/search?query=${encodeURIComponent(searchQuery)}`, {
         headers: { "Authorization": `Bearer ${token}` }
       });
       const data = await res.json();
@@ -55,7 +56,7 @@ export function CommunityScreen() {
   async function sendRequest(targetFarmerId: string) {
     try {
       const token = localStorage.getItem("auth_token");
-      await fetch(`http://localhost:4000/api/connections/request`, {
+      await fetch(`${API_BASE_URL}/connections/request`, {
         method: "POST",
         headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
         body: JSON.stringify({ target_farmer_id: targetFarmerId })
@@ -69,7 +70,7 @@ export function CommunityScreen() {
   async function respondRequest(connectionId: string, action: 'accept' | 'remove') {
     try {
       const token = localStorage.getItem("auth_token");
-      await fetch(`http://localhost:4000/api/connections/${action}`, {
+      await fetch(`${API_BASE_URL}/connections/${action}`, {
         method: "POST",
         headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
         body: JSON.stringify({ connection_id: connectionId })
