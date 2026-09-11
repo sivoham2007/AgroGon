@@ -9,6 +9,16 @@ function handleApiFallback<T>(error: any, fallbackData: T): T {
   return fallbackData;
 }
 
+function shouldFallback(error: any): boolean {
+  // If it's an ApiError with a status, only fallback on network issues (0),
+  // missing endpoints (404), or server crashes (>= 500).
+  // Rethrow validation errors (400) or auth errors (401/403).
+  if (error && typeof error.status === "number") {
+    return error.status === 0 || error.status === 404 || error.status >= 500;
+  }
+  return true;
+}
+
 // Real backend implementation of the AuthService contract — see
 // server/src/routes/auth.js. Passwordless phone+OTP flow, matching the
 // existing UI (mobile number, then OTP screen; no password field).
@@ -21,6 +31,7 @@ export const httpAuthService: AuthService = {
       });
       return res;
     } catch (e) {
+      if (!shouldFallback(e)) throw e;
       const devOtp = Math.floor(100000 + Math.random() * 900000).toString();
       if (typeof window !== "undefined") window.localStorage.setItem(DEMO_OTP_KEY, devOtp);
       return handleApiFallback(e, {
@@ -39,6 +50,7 @@ export const httpAuthService: AuthService = {
       });
       return res;
     } catch (e) {
+      if (!shouldFallback(e)) throw e;
       const devOtp = Math.floor(100000 + Math.random() * 900000).toString();
       if (typeof window !== "undefined") window.localStorage.setItem(DEMO_OTP_KEY, devOtp);
       return handleApiFallback(e, { sent: true, devOtp });
@@ -74,6 +86,7 @@ export async function resendOtp(phone: string, purpose: "login" | "register" = "
       body: JSON.stringify({ phone, purpose }),
     });
   } catch (e) {
+    if (!shouldFallback(e)) throw e;
     const devOtp = Math.floor(100000 + Math.random() * 900000).toString();
     if (typeof window !== "undefined") window.localStorage.setItem(DEMO_OTP_KEY, devOtp);
     return handleApiFallback(e, { sent: true, devOtp });

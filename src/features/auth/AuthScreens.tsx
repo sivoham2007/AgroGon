@@ -186,9 +186,11 @@ export function OtpScreen() {
       <h1 className="font-[var(--font-head)] font-extrabold text-[26px] text-[var(--color-dark)]">{t("auth_verifyTitle")}</h1>
       <p className="text-[13px] text-[#5E7568]">{t("auth_verifySubtitle")} {phone}.</p>
       {devOtp && (
-        <p className="text-[12px] text-[#9A6B0A] bg-[#FFF8E9] border border-[#F3E1AE] rounded-lg px-3 py-2">
-          SMS delivery isn't wired up to a provider yet — for testing, your code is <b className="font-mono">{devOtp}</b>.
-        </p>
+        <div className="flex flex-col gap-1 text-[12px] text-[#9A6B0A] bg-[#FFF8E9] border border-[#F3E1AE] rounded-lg px-3 py-2">
+          <span>OTP service is temporarily unavailable. Demo login has been enabled.</span>
+          <span className="font-bold">Demo OTP: {devOtp}</span>
+          <span>Use this OTP to continue.</span>
+        </div>
       )}
       <div className="flex gap-2 justify-center">
         {digits.map((d, i) => (
