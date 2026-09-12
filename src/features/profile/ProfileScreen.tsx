@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Icon } from "../../components/ui/Icon";
 import { Card } from "../../components/cards/Cards";
 import { Field, PrimaryButton, SecondaryButton } from "../../components/ui/Primitives";
@@ -18,6 +18,15 @@ export function ProfileScreen() {
     crop: farmer.primaryCrop || farm.crop || "", age: farmer.age?.toString() || "",
     area: farmer.farmAreaAcres?.toString() || "", username: farmer.farmerCode || "",
   });
+
+  useEffect(() => {
+    setForm({
+      name: farmer.name || "", phone: farmer.phone || "", email: farmer.email || "", 
+      village: farmer.village || "", district: farmer.district || "", 
+      crop: farmer.primaryCrop || farm.crop || "", age: farmer.age?.toString() || "",
+      area: farmer.farmAreaAcres?.toString() || "", username: farmer.farmerCode || "",
+    });
+  }, [farmer, farm.crop]);
 
   function set<K extends keyof typeof form>(k: K, v: string) { setForm((f) => ({ ...f, [k]: v })); }
 
@@ -84,9 +93,9 @@ export function ProfileScreen() {
         ) : (
           <div className="flex flex-col gap-2.5 text-[13.5px]">
             {[
-              ["Full Name", form.name], ["Phone Number", form.phone], ["Email Address", form.email], 
-              ["Age", form.age], ["Village", form.village], ["District", form.district], 
-              ["Primary Crop", form.crop], ["Farm Area (Acres)", form.area]
+              ["Full Name", farmer.name], ["Phone Number", farmer.phone], ["Email Address", farmer.email], 
+              ["Age", farmer.age], ["Village", farmer.village], ["District", farmer.district], 
+              ["Primary Crop", farmer.primaryCrop], ["Farm Area (Acres)", farmer.farmAreaAcres]
             ].map(([k, v]) => (
                 <div key={k} className="flex justify-between"><span className="text-[#5E7568]">{k}</span><b className={!v ? "text-[#8AA093] font-normal" : ""}>{v || "Not provided"}</b></div>
               ))}
