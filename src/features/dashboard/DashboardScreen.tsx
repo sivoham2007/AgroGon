@@ -93,7 +93,7 @@ export function DashboardScreen() {
         <div className="relative flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-5 py-6">
           <div>
             <div className="font-[var(--font-head)] font-extrabold text-[22px] sm:text-[26px] text-[var(--color-dark)]">
-              {t("dashboard_welcomeBack")} <span className="text-[var(--color-primary)]">{farmer.name}</span> 🌱
+              {t("dashboard_welcomeBack")} <span className="text-[var(--color-primary)]">{farmer.name || "Farmer"}</span> 🌱
             </div>
             <p className="text-[13px] text-[#5E7568] mt-1">{t("dashboard_farmToday")}</p>
           </div>

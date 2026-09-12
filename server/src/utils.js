@@ -20,6 +20,7 @@ export function publicFarmer(row) {
     farmerCode: row.farmer_code,
     name: row.name,
     phone: row.phone,
+    email: row.email,
     preferredLanguage: row.preferred_language,
     state: row.state,
     district: row.district,

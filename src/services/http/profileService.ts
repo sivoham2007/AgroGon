@@ -7,7 +7,7 @@ export const httpProfileService = {
   },
   update(patch: Partial<{
     name: string; age: number; village: string; district: string; state: string;
-    primaryCrop: string; farmAreaAcres: number; preferredLanguage: string;
+    primaryCrop: string; farmAreaAcres: number; preferredLanguage: string; email: string;
   }>): Promise<Farmer> {
     return apiFetch<Farmer>("/profile", { method: "PATCH", body: JSON.stringify(patch) });
   },

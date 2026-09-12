@@ -8,10 +8,14 @@ export interface Farmer {
   farmerCode: string; // e.g. AGG-KA-000124
   name: string;
   phone: string;
+  email?: string;
   preferredLanguage: string;
   state: string;
   district: string;
   village: string;
+  primaryCrop?: string;
+  farmAreaAcres?: number;
+  age?: number;
 }
 
 export interface Farm {

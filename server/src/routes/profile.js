@@ -10,7 +10,7 @@ profileRouter.get("/", (req, res) => {
 
 const EDITABLE_FIELDS = {
   name: "name", age: "age", village: "village", district: "district", state: "state",
-  primaryCrop: "primary_crop", farmAreaAcres: "farm_area_acres",
+  email: "email", primaryCrop: "primary_crop", farmAreaAcres: "farm_area_acres",
   preferredLanguage: "preferred_language", lat: "lat", lng: "lng",
 };
 

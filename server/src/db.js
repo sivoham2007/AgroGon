@@ -176,4 +176,5 @@ try { db.exec("ALTER TABLE farmers ADD COLUMN lat REAL;"); } catch (e) {}
 try { db.exec("ALTER TABLE farmers ADD COLUMN lng REAL;"); } catch (e) {}
 try { db.exec("ALTER TABLE farms ADD COLUMN lat REAL;"); } catch (e) {}
 try { db.exec("ALTER TABLE farms ADD COLUMN lng REAL;"); } catch (e) {}
+try { db.exec("ALTER TABLE farmers ADD COLUMN email TEXT;"); } catch (e) {}
 
