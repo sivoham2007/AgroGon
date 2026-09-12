@@ -1,6 +1,17 @@
 import type { AuthService } from "../contracts";
 import { apiFetch, setToken } from "./client";
-import { CURRENT_FARMER } from "../../data/seedData";
+import type { Farmer } from "../../types/domain";
+
+const EMPTY_FARMER: Farmer = {
+  id: "demo-id",
+  farmerCode: "AGG-DEMO",
+  name: "",
+  phone: "",
+  preferredLanguage: "en",
+  state: "",
+  district: "",
+  village: "",
+};
 
 const DEMO_OTP_KEY = "agrogon.demo_otp";
 
@@ -71,7 +82,7 @@ export const httpAuthService: AuthService = {
         if (expected && otp === expected) {
           window.localStorage.removeItem(DEMO_OTP_KEY);
           setToken("demo-session-token");
-          return handleApiFallback(e, { token: "demo-session-token", farmer: CURRENT_FARMER });
+          return handleApiFallback(e, { token: "demo-session-token", farmer: { ...EMPTY_FARMER, phone } });
         }
       }
       throw e; // Rethrow if it wasn't our demo OTP

@@ -1,9 +1,20 @@
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
-import { CURRENT_FARMER, CURRENT_FARM } from "../data/seedData";
+import { CURRENT_FARM } from "../data/seedData";
 import type { Farm, Farmer } from "../types/domain";
 import { LANGUAGES, type LanguageCode } from "../i18n/translations";
 import { getToken, setToken } from "../services/http/client";
 import { httpProfileService } from "../services/http/profileService";
+
+const EMPTY_FARMER: Farmer = {
+  id: "",
+  farmerCode: "",
+  name: "",
+  phone: "",
+  preferredLanguage: "en",
+  state: "",
+  district: "",
+  village: "",
+};
 
 const LANGUAGE_KEY = "agrogon.language";
 
@@ -48,7 +59,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   const [queueCount, setQueueCount] = useState(0);
   const [language, setLanguageState] = useState<LanguageCode>(getInitialLanguage);
 
-  const [farmer, setFarmer] = useState<Farmer>(CURRENT_FARMER);
+  const [farmer, setFarmer] = useState<Farmer>(EMPTY_FARMER);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authLoading, setAuthLoading] = useState(true);
 
@@ -101,7 +112,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
 
   const logout = useCallback(() => {
     setToken(null);
-    setFarmer(CURRENT_FARMER);
+    setFarmer(EMPTY_FARMER);
     setIsAuthenticated(false);
   }, []);
 
