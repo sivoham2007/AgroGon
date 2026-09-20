@@ -1,5 +1,5 @@
 import type { AuthService } from "../contracts";
-import { apiFetch, setToken } from "./client";
+import { apiFetch, setToken, ApiError } from "./client";
 import type { Farmer } from "../../types/domain";
 
 const EMPTY_FARMER: Farmer = {
@@ -15,17 +15,22 @@ const EMPTY_FARMER: Farmer = {
 
 const DEMO_OTP_KEY = "agrogon.demo_otp";
 
-function handleApiFallback<T>(error: any, fallbackData: T): T {
-  console.warn("API unavailable, falling back to demo mode.", error);
+export function handleApiFallback<T>(error: any, fallbackData: T): T {
+  console.warn("[API Fallback] Request failed, using mock data.", {
+    error: error?.message || error,
+    fallbackData,
+  });
   return fallbackData;
 }
 
-function shouldFallback(error: any): boolean {
-  // If it's an ApiError with a status, only fallback on network issues (0),
-  // missing endpoints (404), or server crashes (>= 500).
-  // Rethrow validation errors (400) or auth errors (401/403).
-  if (error && typeof error.status === "number") {
-    return error.status === 0 || error.status === 404 || error.status >= 500;
+export function shouldFallback(error: any): boolean {
+  // If we get a 401/403/400 from the *real* server, it means the server
+  // is alive but rejected the request. We should NOT fallback, but show
+  // the real error to the user.
+  // We only fallback for network errors (status 0) or 502/503/504 (gateway
+  // errors typically meaning the backend container isn't running).
+  if (error instanceof ApiError) {
+    return error.status === 0 || error.status >= 502;
   }
   return true;
 }
