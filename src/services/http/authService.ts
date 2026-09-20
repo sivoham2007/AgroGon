@@ -33,6 +33,8 @@ function shouldFallback(error: any): boolean {
 // Real backend implementation of the AuthService contract — see
 // server/src/routes/auth.js. Passwordless phone+OTP flow, matching the
 // existing UI (mobile number, then OTP screen; no password field).
+const DEMO_PROFILE_KEY = "agrogon.demo_profile";
+
 export const httpAuthService: AuthService = {
   async register(input) {
     try {
@@ -44,7 +46,22 @@ export const httpAuthService: AuthService = {
     } catch (e) {
       if (!shouldFallback(e)) throw e;
       const devOtp = Math.floor(100000 + Math.random() * 900000).toString();
-      if (typeof window !== "undefined") window.localStorage.setItem(DEMO_OTP_KEY, devOtp);
+      if (typeof window !== "undefined") {
+        window.localStorage.setItem(DEMO_OTP_KEY, devOtp);
+        window.localStorage.setItem(DEMO_PROFILE_KEY, JSON.stringify({
+          ...EMPTY_FARMER,
+          id: "farmer-demo",
+          farmerCode: "AGG-KA-DEMO",
+          name: input.name || "",
+          phone: input.phone || "",
+          preferredLanguage: input.language || "en",
+          state: input.state || "",
+          district: input.district || "",
+          village: input.village || "",
+          primaryCrop: input.primaryCrop || "",
+          farmAreaAcres: input.farmAreaAcres || null,
+        }));
+      }
       return handleApiFallback(e, {
         farmerId: "farmer-demo",
         farmerCode: "AGG-KA-DEMO",
@@ -82,7 +99,14 @@ export const httpAuthService: AuthService = {
         if (expected && otp === expected) {
           window.localStorage.removeItem(DEMO_OTP_KEY);
           setToken("demo-session-token");
-          return handleApiFallback(e, { token: "demo-session-token", farmer: { ...EMPTY_FARMER, phone } });
+          
+          let demoFarmer = { ...EMPTY_FARMER, phone, name: "Demo Farmer" };
+          const savedProfile = window.localStorage.getItem(DEMO_PROFILE_KEY);
+          if (savedProfile) {
+            try { demoFarmer = JSON.parse(savedProfile); } catch(err){}
+          }
+          
+          return handleApiFallback(e, { token: "demo-session-token", farmer: demoFarmer });
         }
       }
       throw e; // Rethrow if it wasn't our demo OTP
