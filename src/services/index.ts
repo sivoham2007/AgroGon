@@ -23,6 +23,16 @@ import { httpNotificationsService } from "./http/notificationsService";
 // model, IoT sensors, drone hardware, market/community data feeds) isn't
 // connected yet; those screens say so in their own UI (IntegrationPending /
 // "SIMULATED" labels) rather than pretending otherwise.
+import {
+  httpCalculatorsService,
+  httpSoilAdvancedService,
+  httpCalendarService,
+  httpRecommendationsService,
+  httpAdminService,
+  httpDiseaseService,
+  httpSoilFertilityService
+} from "./http/advancedServices";
+
 export const services = {
   auth: httpAuthService,
   farm: mockFarmService,
@@ -46,6 +56,14 @@ export const services = {
   irrigation: mockIrrigationService,
   explain: mockExplainabilityService,
   missionPlanning: mockMissionPlanningService,
+  // Added services
+  calculators: httpCalculatorsService,
+  soilAdvanced: httpSoilAdvancedService,
+  calendar: httpCalendarService,
+  recommendations: httpRecommendationsService,
+  admin: httpAdminService,
+  disease: httpDiseaseService,
+  soilFertility: httpSoilFertilityService
 };
 
 // No longer all-or-nothing: auth/weather/profile/notifications are real

@@ -33,13 +33,12 @@ export function GhostButton({ children, className = "", ...rest }: ButtonHTMLAtt
   );
 }
 
-export function Field({ label, ...rest }: { label: string } & React.InputHTMLAttributes<HTMLInputElement>) {
+export function Field({ label, className = "", ...rest }: { label: string } & React.InputHTMLAttributes<HTMLInputElement>) {
   return (
     <label className="flex flex-col gap-1.5">
-      <span className="text-[12.5px] font-semibold text-[var(--color-dark)]">{label}</span>
+      {label && <span className="text-[12.5px] font-semibold text-[var(--color-dark)]">{label}</span>}
       <input
-        className="border-[1.5px] border-[var(--color-mist)] bg-[var(--color-mist-2)] rounded-xl px-3.5 py-3 text-[14.5px]
-        outline-none focus:border-[var(--color-secondary)] focus:bg-white transition-colors"
+        className={`border-[1.5px] border-[var(--color-mist)] bg-[var(--color-mist-2)] rounded-xl px-3.5 py-3 text-[14.5px] outline-none focus:border-[var(--color-secondary)] focus:bg-white transition-colors ${className}`}
         {...rest}
       />
     </label>
@@ -121,3 +120,23 @@ export function Toast({ message }: { message: string }) {
     </div>
   );
 }
+
+export function Select({ label, className = "", children, ...rest }: { label: string } & React.SelectHTMLAttributes<HTMLSelectElement> & { children: ReactNode }) {
+  return (
+    <label className="flex flex-col gap-1.5 relative">
+      <span className="text-[12.5px] font-semibold text-[var(--color-dark)]">{label}</span>
+      <select
+        className={`border-[1.5px] border-[var(--color-mist)] bg-[var(--color-mist-2)] rounded-xl px-3.5 py-3 text-[14.5px] outline-none focus:border-[var(--color-secondary)] focus:bg-white transition-colors appearance-none w-full ${className}`}
+        {...rest}
+      >
+        {children}
+      </select>
+      <div className="absolute right-4 bottom-[14px] pointer-events-none">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#8AA093" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+      </div>
+    </label>
+  );
+}
+
+// Aliases for standard components used by advanced features
+export { PrimaryButton as Button, Field as Input };

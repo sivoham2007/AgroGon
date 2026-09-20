@@ -18,6 +18,11 @@ import { alertsRouter } from "./routes/alerts.js";
 import { connectionsRouter } from "./routes/connections.js";
 import { cameraRouter } from "./routes/camera.js";
 import { aiRouter } from "./routes/ai.js";
+import { calculatorsRouter } from "./routes/calculators.js";
+import { calendarRouter } from "./routes/crop_calendar.js";
+import { recommendationsRouter } from "./routes/recommendations.js";
+import { adminRouter } from "./routes/admin.js";
+import { diseaseRouter } from "./routes/disease.js";
 import { requireAuth } from "./middleware/auth.js";
 import "./db.js"; // ensures schema is created on boot
 
@@ -47,6 +52,12 @@ app.use("/api/alerts", requireAuth, alertsRouter);
 app.use("/api/connections", requireAuth, connectionsRouter);
 app.use("/api/camera", requireAuth, cameraRouter);
 app.use("/api/ai", requireAuth, aiRouter);
+app.use("/api/calculators", requireAuth, calculatorsRouter);
+app.use("/api/calendar", requireAuth, calendarRouter);
+app.use("/api/recommendations", requireAuth, recommendationsRouter);
+app.use("/api/admin", requireAuth, adminRouter); // Add actual admin middleware in production
+app.use("/api/disease", requireAuth, diseaseRouter);
+
 
 // Centralized error handler so unexpected errors never leak stack traces
 app.use((err, _req, res, _next) => {

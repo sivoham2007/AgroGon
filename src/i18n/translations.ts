@@ -151,6 +151,45 @@ const en = {
   drone_coverage: "Coverage", drone_treatmentApplied: "Treatment Applied",
   drone_viewDigitalTwin: "View Farm Digital Twin", drone_viewTimeline: "View Farm Intelligence Timeline",
   drone_createAnother: "Create Another Mission", drone_returnDash: "Return to Dashboard",
+
+  // New Advanced Features
+  nav_fertilizerCalc: "Fertilizer Calculator", nav_pesticideCalc: "Pesticide Calculator",
+  nav_cropCalendar: "Crop Calendar", nav_adminPanel: "Admin Panel",
+  nav_diseaseDetector: "🌿 Disease Detector", nav_soilFertility: "Soil Fertility",
+
+  // Disease Detector
+  disease_uploadImage: "Upload Crop Image", disease_takePhoto: "Take Photo",
+  disease_autoDetect: "Auto Detect Crop", disease_scanCrop: "Analyze Crop",
+  disease_possibleDisease: "Possible Disease", disease_confidence: "Confidence",
+  disease_severity: "Severity", disease_symptoms: "Symptoms Detected",
+  disease_causes: "Possible Causes", disease_recommendations: "Recommended Actions",
+  disease_scanHistory: "Scan History",
+
+  // Soil Fertility
+  soil_healthReport: "Soil Health Report", soil_ph: "pH Level",
+  soil_nitrogen: "Nitrogen (N)", soil_phosphorus: "Phosphorus (P)",
+  soil_potassium: "Potassium (K)", soil_organicMatter: "Organic Matter (%)",
+  soil_analyze: "Analyze Soil", soil_fertilityIndex: "Soil Fertility Index",
+  soil_deficiencies: "Detected Deficiencies", soil_suitableCrops: "Suitable Crops",
+  soil_improvementPlan: "Improvement Plan", soil_history: "View Previous Tests",
+  
+  calc_fertTitle: "Smart Fertilizer Calculator", calc_crop: "Crop", calc_area: "Land Area",
+  calc_soilType: "Soil Type", calc_nAvail: "Available N (kg)", calc_pAvail: "Available P (kg)",
+  calc_kAvail: "Available K (kg)", calc_calculate: "Calculate", calc_results: "Recommendation",
+  calc_nReq: "N Required", calc_pReq: "P Required", calc_kReq: "K Required",
+  
+  calc_pestTitle: "Pesticide Calibration", calc_pestName: "Pest / Disease", calc_product: "Product",
+  calc_dosePerAcre: "Dose per Acre", calc_tankCap: "Tank Capacity (L)", calc_waterPerAcre: "Water per Acre (L)",
+  calc_totalWater: "Total Water Required", calc_numTanks: "Number of Tanks", calc_prodPerTank: "Product per Tank",
+  
+  soil_fertilityScore: "Soil Fertility Score", soil_excellent: "Excellent", soil_good: "Good",
+  soil_moderate: "Moderate", soil_low: "Low", soil_critical: "Critical",
+  soil_possibleDeficiencies: "Possible Deficiencies", soil_action: "Recommended Action",
+  
+  calendar_title: "Crop Calendar", calendar_generate: "Generate Calendar", calendar_plantingDate: "Planting Date",
+  calendar_statusPending: "Pending", calendar_statusCompleted: "Completed", calendar_statusSkipped: "Skipped",
+  
+  admin_title: "Admin Panel", admin_rules: "Agricultural Rules", admin_addRule: "Add Rule",
 };
 
 type Dict = typeof en;
@@ -249,6 +288,27 @@ const hi: Dict = {
   drone_coverage: "कवरेज", drone_treatmentApplied: "उपचार लागू किया गया",
   drone_viewDigitalTwin: "फार्म डिजिटल ट्विन देखें", drone_viewTimeline: "फार्म इंटेलिजेंस टाइमलाइन देखें",
   drone_createAnother: "एक और मिशन बनाएं", drone_returnDash: "डैशबोर्ड पर लौटें",
+
+  nav_fertilizerCalc: "उर्वरक कैलकुलेटर", nav_pesticideCalc: "कीटनाशक कैलकुलेटर",
+  nav_cropCalendar: "फसल कैलेंडर", nav_adminPanel: "व्यवस्थापक कक्ष",
+  
+  calc_fertTitle: "स्मार्ट उर्वरक कैलकुलेटर", calc_crop: "फसल", calc_area: "भूमि क्षेत्र",
+  calc_soilType: "मिट्टी का प्रकार", calc_nAvail: "उपलब्ध N", calc_pAvail: "उपलब्ध P",
+  calc_kAvail: "उपलब्ध K", calc_calculate: "गणना करें", calc_results: "सिफारिशें",
+  calc_nReq: "N आवश्यक", calc_pReq: "P आवश्यक", calc_kReq: "K आवश्यक",
+  
+  calc_pestTitle: "कीटनाशक कैलकुलेटर", calc_pestName: "कीट/रोग", calc_product: "उत्पाद",
+  calc_dosePerAcre: "खुराक प्रति एकड़", calc_tankCap: "टैंक क्षमता (L)", calc_waterPerAcre: "पानी प्रति एकड़ (L)",
+  calc_totalWater: "कुल पानी", calc_numTanks: "टैंक की संख्या", calc_prodPerTank: "उत्पाद प्रति टैंक",
+  
+  soil_fertilityScore: "मिट्टी उर्वरता स्कोर", soil_excellent: "उत्कृष्ट", soil_good: "अच्छा",
+  soil_moderate: "मध्यम", soil_low: "कम", soil_critical: "गंभीर",
+  soil_deficiencies: "संभावित कमियां", soil_action: "अनुशंसित कार्रवाई",
+  
+  calendar_title: "फसल कैलेंडर", calendar_generate: "कैलेंडर बनाएं", calendar_plantingDate: "रोपण तिथि",
+  calendar_statusPending: "लंबित", calendar_statusCompleted: "पूर्ण", calendar_statusSkipped: "छोड़ दिया",
+  
+  admin_title: "व्यवस्थापक कक्ष", admin_rules: "कृषि नियम", admin_addRule: "नियम जोड़ें",
 };
 
 const te: Dict = {
@@ -345,6 +405,27 @@ const te: Dict = {
   drone_coverage: "కవరేజ్", drone_treatmentApplied: "చికిత్స వర్తించబడింది",
   drone_viewDigitalTwin: "ఫార్మ్ డిజిటల్ ట్విన్‌ని వీక్షించండి", drone_viewTimeline: "ఫార్మ్ ఇంటెలిజెన్స్ టైమ్‌లైన్‌ను వీక్షించండి",
   drone_createAnother: "మరొక మిషన్‌ను సృష్టించండి", drone_returnDash: "డ్యాష్‌బోర్డ్‌కు తిరిగి వెళ్లండి",
+
+  nav_fertilizerCalc: "ఎరువుల క్యాలిక్యులేటర్", nav_pesticideCalc: "పురుగుమందు క్యాలిక్యులేటర్",
+  nav_cropCalendar: "పంట క్యాలెండర్", nav_adminPanel: "అడ్మిన్ ప్యానెల్",
+  
+  calc_fertTitle: "స్మార్ట్ ఎరువుల క్యాలిక్యులేటర్", calc_crop: "పంట", calc_area: "భూమి విస్తీర్ణం",
+  calc_soilType: "నేల రకం", calc_nAvail: "అందుబాటులో ఉన్న N", calc_pAvail: "అందుబాటులో ఉన్న P",
+  calc_kAvail: "అందుబాటులో ఉన్న K", calc_calculate: "లెక్కించు", calc_results: "సూచనలు",
+  calc_nReq: "అవసరమైన N", calc_pReq: "అవసరమైన P", calc_kReq: "అవసరమైన K",
+  
+  calc_pestTitle: "పురుగుమందు క్యాలిక్యులేటర్", calc_pestName: "తెగులు/వ్యాధి", calc_product: "ఉత్పత్తి",
+  calc_dosePerAcre: "ఎకరాకు మోతాదు", calc_tankCap: "ట్యాంక్ సామర్థ్యం (L)", calc_waterPerAcre: "ఎకరాకు నీరు (L)",
+  calc_totalWater: "మొత్తం నీరు", calc_numTanks: "ట్యాంకుల సంఖ్య", calc_prodPerTank: "ట్యాంక్‌కు ఉత్పత్తి",
+  
+  soil_fertilityScore: "నేల సారాంశ స్కోర్", soil_excellent: "అద్భుతమైన", soil_good: "మంచిది",
+  soil_moderate: "మధ్యస్థం", soil_low: "తక్కువ", soil_critical: "క్లిష్టమైన",
+  soil_deficiencies: "సాధ్యమైన లోపాలు", soil_action: "సిఫార్సు చేసిన చర్య",
+  
+  calendar_title: "పంట క్యాలెండర్", calendar_generate: "క్యాలెండర్‌ని సృష్టించండి", calendar_plantingDate: "నాటిన తేదీ",
+  calendar_statusPending: "పెండింగ్‌లో ఉంది", calendar_statusCompleted: "పూర్తయింది", calendar_statusSkipped: "వదిలివేయబడింది",
+  
+  admin_title: "అడ్మిన్ ప్యానెల్", admin_rules: "వ్యవసాయ నియమాలు", admin_addRule: "నియమాన్ని జోడించండి",
 };
 
 const ta: Dict = {

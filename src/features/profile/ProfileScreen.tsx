@@ -12,18 +12,18 @@ export function ProfileScreen() {
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
-  const [form, setForm] = useState({
-    name: farmer.name || "", phone: farmer.phone || "", email: farmer.email || "", 
+    const [form, setForm] = useState({
+    name: farmer.name || "", phone: farmer.phone || "", 
     village: farmer.village || "", district: farmer.district || "", 
-    crop: farmer.primaryCrop || farm.crop || "", age: farmer.age?.toString() || "",
+    crop: farmer.primaryCrop || farm.crop || "",
     area: farmer.farmAreaAcres?.toString() || "", username: farmer.farmerCode || "",
   });
 
   useEffect(() => {
     setForm({
-      name: farmer.name || "", phone: farmer.phone || "", email: farmer.email || "", 
+      name: farmer.name || "", phone: farmer.phone || "", 
       village: farmer.village || "", district: farmer.district || "", 
-      crop: farmer.primaryCrop || farm.crop || "", age: farmer.age?.toString() || "",
+      crop: farmer.primaryCrop || farm.crop || "",
       area: farmer.farmAreaAcres?.toString() || "", username: farmer.farmerCode || "",
     });
   }, [farmer, farm.crop]);
@@ -36,8 +36,7 @@ export function ProfileScreen() {
     try {
       const updated = await httpProfileService.update({
         name: form.name, village: form.village, district: form.district, 
-        primaryCrop: form.crop, email: form.email, 
-        age: form.age ? parseInt(form.age, 10) : undefined,
+        primaryCrop: form.crop, 
         farmAreaAcres: form.area ? parseFloat(form.area) : undefined,
       });
       updateFarmer(updated);
@@ -78,8 +77,6 @@ export function ProfileScreen() {
           <>
             <Field label="Full Name" value={form.name} onChange={(e) => set("name", e.target.value)} />
             <Field label="Phone Number" value={form.phone} onChange={(e) => set("phone", e.target.value)} />
-            <Field label="Email Address" value={form.email} onChange={(e) => set("email", e.target.value)} />
-            <Field label="Age" value={form.age} onChange={(e) => set("age", e.target.value)} />
             <Field label="Village" value={form.village} onChange={(e) => set("village", e.target.value)} />
             <Field label="District" value={form.district} onChange={(e) => set("district", e.target.value)} />
             <Field label="Primary Crop" value={form.crop} onChange={(e) => set("crop", e.target.value)} />
@@ -93,8 +90,8 @@ export function ProfileScreen() {
         ) : (
           <div className="flex flex-col gap-2.5 text-[13.5px]">
             {[
-              ["Full Name", farmer.name], ["Phone Number", farmer.phone], ["Email Address", farmer.email], 
-              ["Age", farmer.age], ["Village", farmer.village], ["District", farmer.district], 
+              ["Full Name", farmer.name], ["Phone Number", farmer.phone], 
+              ["Village", farmer.village], ["District", farmer.district], 
               ["Primary Crop", farmer.primaryCrop], ["Farm Area (Acres)", farmer.farmAreaAcres]
             ].map(([k, v]) => (
                 <div key={k} className="flex justify-between"><span className="text-[#5E7568]">{k}</span><b className={!v ? "text-[#8AA093] font-normal" : ""}>{v || "Not provided"}</b></div>

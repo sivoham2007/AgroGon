@@ -12,15 +12,21 @@ const PUBLIC_ROUTES = new Set(["/", "/onboarding", "/login", "/otp", "/register"
 
 const NAV_ITEMS = [
   { path: "/dashboard", key: "nav_dashboard" as const, icon: "home" as const },
+  { path: "/disease-detector", key: "nav_diseaseDetector" as const, icon: "disease" as const },
+  { path: "/soil-fertility", key: "nav_soilFertility" as const, icon: "sensor" as const },
   { path: "/farm", key: "nav_myFarm" as const, icon: "farm" as const },
   { path: "/risk", key: "nav_cropHealth" as const, icon: "gauge" as const },
-  { path: "/scanner", key: "nav_diseaseDetection" as const, icon: "scan" as const },
   { path: "/weather", key: "nav_weatherAlerts" as const, icon: "cloud" as const },
   { path: "/alerts", key: "nav_alerts" as const, icon: "alerts" as const },
   { path: "/recommendations", key: "nav_recommendations" as const, icon: "chat" as const },
+  { path: "/crop-recommendation", key: "nav_cropRecommendation" as const, icon: "farm" as const },
+  { path: "/crop-calendar", key: "nav_cropCalendar" as const, icon: "calendar" as const },
+  { path: "/fertilizer-calculator", key: "nav_fertilizerCalc" as const, icon: "check" as const },
+  { path: "/pesticide-calculator", key: "nav_pesticideCalc" as const, icon: "check" as const },
   { path: "/tasks", key: "nav_tasks" as const, icon: "check" as const },
   { path: "/camera", key: "nav_cameraMonitoring" as const, icon: "camera" as const },
   { path: "/reports", key: "nav_reports" as const, icon: "history" as const },
+  { path: "/admin", key: "nav_adminPanel" as const, icon: "settings" as const },
 ];
 
 const SECONDARY_ITEMS = [

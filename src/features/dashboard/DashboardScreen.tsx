@@ -38,6 +38,7 @@ export function DashboardScreen() {
   const [health, setHealth] = useState<HealthSnapshot | null>(null);
   const [actions, setActions] = useState<PriorityAction[] | null>(null);
   const [sensor, setSensor] = useState<SensorReading | null>(null);
+  const [tasks, setTasks] = useState<any[] | null>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -72,13 +73,23 @@ export function DashboardScreen() {
           : { online: false, soilMoisturePct: 0, tempC: 0, humidityPct: 0, ph: 7, light: "Normal", lastSyncedLabel: "Unknown" }
       );
     });
+    
+    // Also fetch today's tasks
+    services.calendar.getEvents(farm.id).then(events => {
+        if (!mounted) return;
+        const pending = (events as any[]).filter(e => e.status === 'pending');
+        setTasks(pending);
+    }).catch(err => {
+        console.error("Calendar task fetch failed", err);
+        if (mounted) setTasks([]); // Provide fallback so UI doesn't hang
+    });
 
     return () => {
       mounted = false;
     };
   }, [farm.id]);
 
-  if (!weather || !health || !actions || !sensor) return <LoadingState label={t("common_loading")} />;
+  if (!weather || !health || !actions || !sensor || tasks === null) return <LoadingState label={t("common_loading")} />;
 
   const today = new Date();
 
@@ -114,6 +125,34 @@ export function DashboardScreen() {
         <StatCard icon="farm" iconBg="#EFE7F5" iconFg="#7C4FD1" label={t("dashboard_activeCrops")} value="2" sub={t("common_crops")} />
         <StatCard icon="chat" iconBg="#E7EEFB" iconFg="#3B6FD6" label={t("dashboard_aiRecs")} value={`${actions.length}`} sub={t("common_new")} />
         <StatCard icon="alerts" iconBg="#FBE8E7" iconFg="var(--color-danger)" label={t("dashboard_activeAlerts")} value={`${SEED_ALERTS.length}`} sub={t("common_alerts")} />
+      </div>
+
+      {/* Quick Tools */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+        <button onClick={() => navigate("/disease-detector")} className="bg-white border border-[var(--color-mist)] p-3 rounded-xl flex items-center gap-3 text-left hover:border-[var(--color-primary)] transition-colors shadow-sm">
+          <div className="w-10 h-10 rounded-lg bg-[#FBE8E7] text-[var(--color-danger)] flex items-center justify-center flex-none"><Icon name="camera" className="w-5 h-5" /></div>
+          <div><div className="font-bold text-[13px] text-[var(--color-dark)]">Disease Detector</div><div className="text-[11px] text-[#8AA093]">AI crop scan</div></div>
+        </button>
+        <button onClick={() => navigate("/soil-fertility")} className="bg-white border border-[var(--color-mist)] p-3 rounded-xl flex items-center gap-3 text-left hover:border-[var(--color-primary)] transition-colors shadow-sm">
+          <div className="w-10 h-10 rounded-lg bg-[#FFF3E0] text-[#E65100] flex items-center justify-center flex-none"><Icon name="gauge" className="w-5 h-5" /></div>
+          <div><div className="font-bold text-[13px] text-[var(--color-dark)]">Soil Fertility</div><div className="text-[11px] text-[#8AA093]">Check NPK & pH</div></div>
+        </button>
+        <button onClick={() => navigate("/fertilizer-calculator")} className="bg-white border border-[var(--color-mist)] p-3 rounded-xl flex items-center gap-3 text-left hover:border-[var(--color-primary)] transition-colors shadow-sm">
+          <div className="w-10 h-10 rounded-lg bg-[#E6F4EA] text-[var(--color-primary)] flex items-center justify-center flex-none"><Icon name="check" className="w-5 h-5" /></div>
+          <div><div className="font-bold text-[13px] text-[var(--color-dark)]">{t("nav_fertilizerCalc")}</div><div className="text-[11px] text-[#8AA093]">Smart NPK</div></div>
+        </button>
+        <button onClick={() => navigate("/pesticide-calculator")} className="bg-white border border-[var(--color-mist)] p-3 rounded-xl flex items-center gap-3 text-left hover:border-[var(--color-primary)] transition-colors shadow-sm">
+          <div className="w-10 h-10 rounded-lg bg-[#E6F4EA] text-[var(--color-primary)] flex items-center justify-center flex-none"><Icon name="check" className="w-5 h-5" /></div>
+          <div><div className="font-bold text-[13px] text-[var(--color-dark)]">{t("nav_pesticideCalc")}</div><div className="text-[11px] text-[#8AA093]">Dosage & Mix</div></div>
+        </button>
+        <button onClick={() => navigate("/crop-recommendation")} className="bg-white border border-[var(--color-mist)] p-3 rounded-xl flex items-center gap-3 text-left hover:border-[var(--color-primary)] transition-colors shadow-sm">
+          <div className="w-10 h-10 rounded-lg bg-[#EAF3EC] text-[var(--color-secondary)] flex items-center justify-center flex-none"><Icon name="farm" className="w-5 h-5" /></div>
+          <div><div className="font-bold text-[13px] text-[var(--color-dark)]">Crop Recs</div><div className="text-[11px] text-[#8AA093]">AI Match</div></div>
+        </button>
+        <button onClick={() => navigate("/crop-calendar")} className="bg-white border border-[var(--color-mist)] p-3 rounded-xl flex items-center gap-3 text-left hover:border-[var(--color-primary)] transition-colors shadow-sm">
+          <div className="w-10 h-10 rounded-lg bg-[#FFF3E0] text-[#E65100] flex items-center justify-center flex-none"><Icon name="calendar" className="w-5 h-5" /></div>
+          <div><div className="font-bold text-[13px] text-[var(--color-dark)]">{t("nav_cropCalendar")}</div><div className="text-[11px] text-[#8AA093]">Lifecycle Planner</div></div>
+        </button>
       </div>
 
       {/* Live Farm View + Weather + Soil */}
@@ -193,6 +232,29 @@ export function DashboardScreen() {
                 <p className="text-[12px] text-[#5E7568] mt-1">{a.reason}</p>
               </div>
             ))}
+          </div>
+        </Card>
+
+        {/* Farm Tasks */}
+        <Card>
+          <div className="flex items-center justify-between mb-3">
+            <div className="font-[var(--font-head)] font-bold text-[15px]">Pending Tasks</div>
+            <button onClick={() => navigate("/crop-calendar")} className="text-[11.5px] font-bold text-[var(--color-secondary)]">{t("dashboard_viewAll")}</button>
+          </div>
+          <div className="flex flex-col gap-2.5">
+            {tasks && tasks.length > 0 ? tasks.slice(0, 3).map((t: any) => (
+              <div key={t.id} className="flex items-center justify-between gap-2 p-3 rounded-xl bg-[var(--color-mist-2)] border-l-4 border-[var(--color-warning)]">
+                  <div className="min-w-0">
+                    <div className="text-[12.5px] font-semibold truncate">{t.title}</div>
+                    <div className="text-[11px] text-[#8AA093]">{new Date(t.event_date).toLocaleDateString()}</div>
+                  </div>
+                  <div className="w-8 h-8 rounded-lg bg-white border border-[var(--color-mist)] flex items-center justify-center cursor-pointer hover:bg-[var(--color-primary)] hover:text-white transition-colors" onClick={() => navigate("/crop-calendar")}>
+                      <Icon name="check" className="w-4 h-4" />
+                  </div>
+              </div>
+            )) : (
+                <div className="p-4 text-center text-[#8AA093] text-[12px]">No pending tasks!</div>
+            )}
           </div>
         </Card>
 

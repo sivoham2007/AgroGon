@@ -29,10 +29,10 @@ weatherRouter.get("/", async (req, res) => {
   const url = new URL("https://api.open-meteo.com/v1/forecast");
   url.searchParams.set("latitude", String(lat));
   url.searchParams.set("longitude", String(lon));
-  url.searchParams.set("current", "temperature_2m,relative_humidity_2m,apparent_temperature,wind_speed_10m,weather_code,precipitation_probability");
+  url.searchParams.set("current", "temperature_2m,relative_humidity_2m,apparent_temperature,wind_speed_10m,weather_code,precipitation_probability,soil_temperature_0cm");
   url.searchParams.set("daily", "weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,uv_index_max,sunrise,sunset");
   url.searchParams.set("timezone", "auto");
-  url.searchParams.set("forecast_days", "5");
+  url.searchParams.set("forecast_days", "7");
 
   try {
     const upstream = await fetch(url);
@@ -52,6 +52,11 @@ weatherRouter.get("/", async (req, res) => {
       return new Date(isoString).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     };
 
+    let ag_warnings = [];
+    if (current.weather_code >= 61 && current.weather_code <= 67) ag_warnings.push("Rain expected — delay pesticide application.");
+    if (current.weather_code >= 80) ag_warnings.push("Heavy rainfall warning detected for your area.");
+    if (current.temperature_2m > 35) ag_warnings.push("High temperature expected — check irrigation requirements.");
+
     res.json({
       tempC: Math.round(current.temperature_2m),
       feelsLike: current.apparent_temperature != null ? Math.round(current.apparent_temperature) : undefined,
@@ -59,10 +64,12 @@ weatherRouter.get("/", async (req, res) => {
       humidityPct: Math.round(current.relative_humidity_2m),
       rainChancePct: current.precipitation_probability_max ?? current.precipitation_probability ?? 0,
       windKph: Math.round(current.wind_speed_10m),
+      soilTempC: current.soil_temperature_0cm != null ? Math.round(current.soil_temperature_0cm) : null,
       uvIndex: daily.uv_index_max?.[0] ?? null,
       sunrise: formatTime(daily.sunrise?.[0]),
       sunset: formatTime(daily.sunset?.[0]),
       note: current.weather_code >= 61 ? "Rain expected — good day to inspect drainage." : "Conditions look stable for field work.",
+      ag_warnings,
       forecast: (daily.time || []).map((date, i) => ({
         day: days[i] || new Date(date).toLocaleDateString(undefined, { weekday: "short" }),
         date,

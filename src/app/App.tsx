@@ -33,6 +33,13 @@ import { TasksScreen } from "../features/tasks/TasksScreen";
 import { CameraMonitoringScreen } from "../features/camera/CameraMonitoringScreen";
 import { ReportsScreen } from "../features/reports/ReportsScreen";
 import { FarmMapScreen } from "../features/farmMap/FarmMapScreen";
+import { FertilizerCalculatorScreen } from "../features/calculators/FertilizerCalculatorScreen";
+import { PesticideCalculatorScreen } from "../features/calculators/PesticideCalculatorScreen";
+import { CropRecommendationScreen } from "../features/recommendations/CropRecommendationScreen";
+import { CropCalendarScreen } from "../features/calendar/CropCalendarScreen";
+import { AdminPanelScreen } from "../features/admin/AdminPanelScreen";
+import { DiseaseDetectorScreen } from "../features/diseaseDetector/DiseaseDetectorScreen";
+import { SoilFertilityScreen } from "../features/soilFertility/SoilFertilityScreen";
 
 // Gate for every screen that needs a real logged-in farmer. Without this,
 // the app previously showed the same hardcoded farmer to anyone who typed
@@ -82,6 +89,7 @@ export default function App() {
         <Route path="/schemes" element={<RequireAuth><SchemesScreen /></RequireAuth>} />
         <Route path="/community" element={<RequireAuth><CommunityScreen /></RequireAuth>} />
         <Route path="/recommendations" element={<RequireAuth><RecommendationsScreen /></RequireAuth>} />
+        <Route path="/crop-recommendation" element={<RequireAuth><CropRecommendationScreen /></RequireAuth>} />
         <Route path="/tasks" element={<RequireAuth><TasksScreen /></RequireAuth>} />
         <Route path="/camera" element={<RequireAuth><CameraMonitoringScreen /></RequireAuth>} />
         <Route path="/reports" element={<RequireAuth><ReportsScreen /></RequireAuth>} />
@@ -89,6 +97,14 @@ export default function App() {
         <Route path="/notifications" element={<RequireAuth><NotificationsScreen /></RequireAuth>} />
         <Route path="/profile" element={<RequireAuth><ProfileScreen /></RequireAuth>} />
         <Route path="/settings" element={<RequireAuth><SettingsScreen /></RequireAuth>} />
+        
+        {/* Advanced Features */}
+        <Route path="/fertilizer-calculator" element={<RequireAuth><FertilizerCalculatorScreen /></RequireAuth>} />
+        <Route path="/pesticide-calculator" element={<RequireAuth><PesticideCalculatorScreen /></RequireAuth>} />
+        <Route path="/crop-calendar" element={<RequireAuth><CropCalendarScreen /></RequireAuth>} />
+        <Route path="/admin" element={<RequireAuth><AdminPanelScreen /></RequireAuth>} />
+        <Route path="/disease-detector" element={<RequireAuth><DiseaseDetectorScreen /></RequireAuth>} />
+        <Route path="/soil-fertility" element={<RequireAuth><SoilFertilityScreen /></RequireAuth>} />
 
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
