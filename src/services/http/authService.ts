@@ -27,10 +27,10 @@ export function shouldFallback(error: any): boolean {
   // If we get a 401/403/400 from the *real* server, it means the server
   // is alive but rejected the request. We should NOT fallback, but show
   // the real error to the user.
-  // We only fallback for network errors (status 0) or 502/503/504 (gateway
-  // errors typically meaning the backend container isn't running).
+  // We only fallback for network errors (status 0), missing endpoints (404)
+  // or 502/503/504 (gateway errors typically meaning the backend container isn't running).
   if (error instanceof ApiError) {
-    return error.status === 0 || error.status >= 502;
+    return error.status === 0 || error.status === 404 || error.status >= 500;
   }
   return true;
 }
