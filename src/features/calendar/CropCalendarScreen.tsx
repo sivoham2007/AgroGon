@@ -27,12 +27,21 @@ export function CropCalendarScreen() {
     }, [activeFarm?.id, activeFarm?.crop]);
 
     const loadEvents = async () => {
+        if (!activeFarm?.id) {
+            setEvents([]);
+            setLoading(false);
+            return;
+        }
+        
         setLoading(true);
+        setError(null);
         try {
-            const data = await services.calendar.getEvents(activeFarm?.id);
-            setEvents(data as any[]);
-        } catch (e) {
+            const data = await services.calendar.getEvents(activeFarm.id);
+            setEvents(Array.isArray(data) ? data : []);
+        } catch (e: any) {
             console.error(e);
+            setError(e.message || "Unable to load your crop calendar. Please try again.");
+            setEvents([]);
         } finally {
             setLoading(false);
         }
@@ -43,11 +52,16 @@ export function CropCalendarScreen() {
             setError("Select a crop and planting date to generate your crop calendar.");
             return;
         }
+        if (!activeFarm?.id) {
+            setError("No active farm selected. Please select a farm first.");
+            return;
+        }
+        
         setGenerating(true);
         setError(null);
         try {
             await services.calendar.generateCalendar({
-                farm_id: activeFarm?.id,
+                farm_id: activeFarm.id,
                 ...form
             });
             showToast("Calendar generated successfully!");
@@ -65,8 +79,9 @@ export function CropCalendarScreen() {
             await services.calendar.updateEventStatus(id, status);
             showToast(`Task marked as ${status}`);
             await loadEvents(); 
-        } catch(e) {
+        } catch(e: any) {
             console.error(e);
+            showToast(e.message || "Failed to update task status");
         }
     };
     
@@ -85,7 +100,7 @@ export function CropCalendarScreen() {
                 <p className="text-[13px] text-[#5E7568]">Manage your crop's lifecycle events.</p>
             </div>
 
-            {events.length === 0 ? (
+            {(!events || events.length === 0) ? (
                 <Card>
                     {error && (
                         <div className="p-3 mb-4 bg-[#FBE8E7] border border-[var(--color-danger)] text-[var(--color-danger)] rounded-lg text-[13px]">
