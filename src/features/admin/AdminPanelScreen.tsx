@@ -8,6 +8,7 @@ export function AdminPanelScreen() {
     const t = useT();
     const [rules, setRules] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
     const [showForm, setShowForm] = useState(false);
     const [form, setForm] = useState({
         rule_type: "disease_threshold",
@@ -21,17 +22,21 @@ export function AdminPanelScreen() {
 
     const loadRules = async () => {
         setLoading(true);
+        setError(null);
         try {
             const data = await services.admin.getRules();
-            setRules(data as any[]);
-        } catch (e) {
+            setRules(Array.isArray(data) ? data : []);
+        } catch (e: any) {
             console.error(e);
+            setError(e.message || "Failed to load rules.");
+            setRules([]);
         } finally {
             setLoading(false);
         }
     };
 
     const addRule = async () => {
+        setError(null);
         try {
             await services.admin.addRule({
                 ...form,
@@ -40,19 +45,21 @@ export function AdminPanelScreen() {
             setShowForm(false);
             setForm({ rule_type: "disease_threshold", rule_key: "", rule_data: "{}" });
             await loadRules();
-        } catch (e) {
-            alert("Invalid JSON data");
+        } catch (e: any) {
             console.error(e);
+            setError(e.message || "Failed to add rule. Invalid JSON data or network error.");
         }
     };
 
     const deleteRule = async (id: string) => {
         if (!confirm("Delete rule?")) return;
+        setError(null);
         try {
             await services.admin.deleteRule(id);
             await loadRules();
-        } catch (e) {
+        } catch (e: any) {
             console.error(e);
+            setError(e.message || "Failed to delete rule.");
         }
     };
 
@@ -98,7 +105,12 @@ export function AdminPanelScreen() {
             )}
 
             <div className="flex flex-col gap-3">
-                {rules.map((r: any) => (
+                {error && (
+                    <div className="p-3 bg-[#FBE8E7] border border-[var(--color-danger)] text-[var(--color-danger)] rounded-lg text-[13px]">
+                        {error}
+                    </div>
+                )}
+                {(rules ?? []).map((r: any) => (
                     <Card key={r.id}>
                         <div className="flex justify-between items-start mb-2">
                             <div>
@@ -112,7 +124,7 @@ export function AdminPanelScreen() {
                         </pre>
                     </Card>
                 ))}
-                {rules.length === 0 && <div className="text-center p-8 text-[#8AA093]">No rules found.</div>}
+                {(!rules || rules.length === 0) && <div className="text-center p-8 text-[#8AA093]">No rules found.</div>}
             </div>
         </div>
     );
